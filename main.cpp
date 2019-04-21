@@ -9,13 +9,22 @@
 #define GESTORDB_2_2018_UTILS_H
 #endif
 
+using namespace std;
+
+// import Models
+#include "model/Rectangle.h"
+#include "model/RTree.h"
+
+
+// import tests
+#include "testing/RTreeTest.h"
+
 // importing utils for pre-computing
 #include "utils/utils.h"
 #include "utils/command.h"
 
-using namespace std;
 
-// #include "models/Field.h"
+
 // #include "models/Node.h"
 // #include "models/Product.h"
 // #include "models/Customer.h"
