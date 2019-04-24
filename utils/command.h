@@ -21,9 +21,22 @@ namespace console{
         std::cout << "Hello " << name;
       } else if (exist(argv, argv + argc, "--run-tests")) {
         std::cout << "----- running tests -----" << endl;
-        (new RTreeTest())->run();
-        (new SerializeTest())->run();
-        std::cout << "----- end test section -----" << endl;
+        try{
+          (new RTreeTest())->run();
+          (new SerializeTest())->run();
+
+          // test of tester
+          TestSuite *suite = new TestSuite();
+          suite->setContext(__func__);
+          // suite->assert<int>(2,1);
+          suite->assertEquals<int>(1,1);
+
+          std::cout << "----- end test section -----" << endl;
+        } catch(TestException e) {
+          std::cout << "exception caught" << endl;
+          std::cout << e.what() << endl;
+        }
+
       }
       return 0;
   }

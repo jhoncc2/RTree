@@ -19,4 +19,8 @@ public:
     return parent == NULL;
   }
 
+  bool isLeaf() {
+    return true;
+  }
+
 };

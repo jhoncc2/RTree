@@ -3,9 +3,6 @@ using namespace std;
 class RTreeTest : public TestSuite {
 public:
 
-  RTreeTest() {
-  }
-
   void run(){
     this->testBasic();
   }
@@ -13,9 +10,11 @@ public:
   /**********write tests*************/
 
   void testBasic(){
-    new RTreeLeaf();
+    RTreeLeaf *leaf = new RTreeLeaf();
     new RTreeNode();
 
+    assertTrue(leaf->isRoot());
+    assertTrue(leaf->isLeaf());
     // (RTree.newTree()).isRoot();
   }
 

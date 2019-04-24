@@ -18,5 +18,6 @@ public:
   virtual bool isRoot() {
     return parent == NULL;
   }
+  virtual bool isLeaf() { return false;}
 
 };

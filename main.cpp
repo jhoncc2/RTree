@@ -21,6 +21,7 @@ using namespace std;
 
 
 // import tests
+#include "testing/TestException.h"
 #include "testing/TestSuite.h"
 #include "testing/RTreeTest.h"
 #include "testing/SerializeTest.h"
