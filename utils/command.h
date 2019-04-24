@@ -19,11 +19,11 @@ namespace console{
           name = console::get(argv, argv + argc, "--name");
         }
         std::cout << "Hello " << name;
-      } else if (exist(argv, argv + argc, "--run-testing")) {
+      } else if (exist(argv, argv + argc, "--run-tests")) {
         std::cout << "----- running tests -----" << endl;
-        RTreeTest *t = new RTreeTest();
-        t->run();
-        std::cout << "----- end test section -----";
+        (new RTreeTest())->run();
+        (new SerializeTest())->run();
+        std::cout << "----- end test section -----" << endl;
       }
       return 0;
   }

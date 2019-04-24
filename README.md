@@ -3,7 +3,7 @@
 
 Compile:
 ```
->  g++ main.cpp -std=c++11 -o runme
+>  g++ main.cpp -std=c++11 -o run.out
 ```
 ### Experiment Commands
 

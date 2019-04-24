@@ -1,20 +1,22 @@
 using namespace std;
 
-class RTreeTest {
+class RTreeTest : public TestSuite {
 public:
-  RTree *target;
 
   RTreeTest() {
-    target = new RTree();
   }
 
-  run(){
+  void run(){
     this->testBasic();
   }
 
-  testBasic(){
-    Rectangle *r = new Rectangle(1,1,3,3);
-    target->insert(*r);
+  /**********write tests*************/
+
+  void testBasic(){
+    new RTreeLeaf();
+    new RTreeNode();
+
+    // (RTree.newTree()).isRoot();
   }
 
 };
