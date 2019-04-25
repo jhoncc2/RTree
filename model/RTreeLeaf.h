@@ -2,7 +2,7 @@ using namespace std;
 #include <vector>
 
 class RTreeLeaf: public RTree {
-  RTree *parent = nullptr;
+
   vector<Rectangle*> data;
 
 public:
@@ -31,7 +31,10 @@ public:
   }
 
   int size(){
-    return data.size();
+    if (data.size() > sizee)
+      sizee = data.size();
+
+    return sizee;
   }
 
   std::string serialize() {
@@ -44,14 +47,46 @@ public:
     //body
     for(int i = 0; i< data.size(); i++) {
       output << data[i]->serialize();
+      output << endl;
     }
-
     return output.str();
   }
-
 
   virtual void addRectangleSilently(Rectangle *r) {
     data.push_back(r);
   }
+
+  static RTree *createInstance(string line) {
+    std::istringstream iss(line);
+    std::string segment;
+
+    // cout << line << endl;
+    // std::getline(iss, segment, ',');
+    // int a = std::stoi(segment, nullptr); // is leaf
+    std::getline(iss, segment, ',');
+    int b = std::stoi(segment, nullptr); // number of elements
+    std::getline(iss, segment, ',');
+    string c = segment; // filename
+    // boudning box
+    std::getline(iss, segment, ',');
+    int ix = std::stoi(segment, nullptr);
+    std::getline(iss, segment, ',');
+    int iy = std::stoi(segment, nullptr);
+    std::getline(iss, segment, ',');
+    int ex = std::stoi(segment, nullptr);
+    std::getline(iss, segment, ',');
+    int ey = std::stoi(segment, nullptr);
+
+    // std::cout << touple << endl;
+    // std::cout << i << "-" << n << "-" << r << endl;
+
+    RTree *t = new RTreeLeaf();
+    t->setBoundingBox(new Rectangle(ix,iy,ex,ey));
+    t->setFilename(c);
+    t->setSize(b);
+
+    return t;
+  }
+
 
 };

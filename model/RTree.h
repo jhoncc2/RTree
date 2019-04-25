@@ -6,6 +6,8 @@ class RTree {
 protected:
   Rectangle *bbox = nullptr;
   RTree *parent = nullptr;
+  string filename = "";
+  int sizee = 1;
 
 public:
 
@@ -14,7 +16,6 @@ public:
   }
 
   virtual Rectangle *insertRectangle(Rectangle *r) {
-
   }
 
   virtual vector<Rectangle> find(Rectangle &r) {
@@ -23,12 +24,34 @@ public:
   virtual bool isRoot() {
     return parent == NULL;
   }
+
+  virtual void setParent(RTree *r) {
+    parent = r;
+  }
+
+  void setFilename(string filename) {
+    this->filename = filename;
+  }
+
+  string getFilename() {
+    return filename;
+  }
+
   virtual bool isLeaf() { return false;}
+  virtual int size() { return this->sizee;}
+  virtual int setSize(int size) {
+    this->sizee = size;
+  }
 
   virtual string serialize() { }
 
   Rectangle *boundingBox() {
     return bbox;
   }
+
+  void setBoundingBox(Rectangle *r) {
+    bbox = r;
+  }
+
 
 };

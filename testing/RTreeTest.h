@@ -4,6 +4,7 @@ class RTreeTest : public TestSuite {
 public:
 
   void run(){
+
     this->testBasic();
     this->testInsertLeaf();
   }
@@ -12,8 +13,8 @@ public:
 
   void testBasic(){
     setContext(__func__);
-    RTreeLeaf *leaf = new RTreeLeaf();
 
+    RTreeLeaf *leaf = new RTreeLeaf();
     assertTrue(leaf->isRoot());
     assertTrue(leaf->isLeaf());
   }

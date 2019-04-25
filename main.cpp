@@ -17,6 +17,7 @@ using namespace std;
 #include "model/RTree.h"
 #include "model/RTreeLeaf.h"
 #include "model/RTreeNode.h"
+// #include "model/RTreeSerialization.h"
 #include "utils/File.h"
 
 // import tests
@@ -52,13 +53,13 @@ using namespace std;
 
 
 int main (int argc, char *argv[]) {
-    try
-    {
+    // try
+    // {
         return console::handlecommands(argc, argv);
-    }
-    catch(const std::exception&)  // Consider using a custom exception type for intentional
-    {                             // throws. A good idea might be a `return_exception`.
-        cerr << endl << "error running the code" << endl;
-        return EXIT_FAILURE;
-    }
+    // }
+    // catch(const std::exception&)  // Consider using a custom exception type for intentional
+    // {                             // throws. A good idea might be a `return_exception`.
+    //     cerr << endl << "error running the code" << endl;
+    //     return EXIT_FAILURE;
+    // }
 }

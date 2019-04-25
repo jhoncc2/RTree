@@ -57,8 +57,7 @@ public:
     output << ini->x
         << ',' << ini->y
         << ',' << end->x
-        << ',' << end->y
-        << endl;
+        << ',' << end->y;
 
     return output.str();
   }
@@ -67,8 +66,7 @@ public:
     std::istringstream iss(line);
     std::string segment;
 
-    cout << line << endl;
-
+    
     std::getline(iss, segment, ',');
     int a = std::stoi(segment, nullptr);
     std::getline(iss, segment, ',');
