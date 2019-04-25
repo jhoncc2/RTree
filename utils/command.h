@@ -22,6 +22,7 @@ namespace console{
       } else if (exist(argv, argv + argc, "--run-tests")) {
         std::cout << "----- running tests -----" << endl;
         try{
+          (new TestSuite())->run();
           (new RTreeTest())->run();
           (new SerializeTest())->run();
 

@@ -16,18 +16,36 @@ public :
       context = funName;
     }
 
-    virtual void run() {}
+    virtual void run() {
+      assertTrue(true);
+      assertNull(NULL);
+      assertEquals(1,1);
+      try {
+        assertNull(1);
+      } catch(TestException t) {}
+    }
 
     bool assertTrue(bool a) {
       if (a)
         return true;
-
-      throwException();
+        throwException();
     }
+
+    bool assert(bool a) {
+      return assertTrue(a);
+    }
+
 
     template <class T>
     bool assertEquals(T a, T b) {
       if (a == b)
+        return true;
+      throwException();
+    }
+
+    template <class T>
+    bool assertNull(T a) {
+      if (a == 0) // null pointer, points to 0
         return true;
       throwException();
     }

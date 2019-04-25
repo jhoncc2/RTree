@@ -4,12 +4,17 @@ using namespace std;
 
 class RTree {
 protected:
-  Rectangle *self = NULL;
-  RTree *parent = NULL;
+  Rectangle *bbox = nullptr;
+  RTree *parent = nullptr;
 
 public:
 
-  virtual Rectangle *insert(Rectangle &r) {
+  virtual void insert(int ix, int iy, int ex, int ey) {
+    insertRectangle(new Rectangle(ix, iy, ex, ey));
+  }
+
+  virtual Rectangle *insertRectangle(Rectangle *r) {
+
   }
 
   virtual vector<Rectangle> find(Rectangle &r) {
@@ -19,5 +24,11 @@ public:
     return parent == NULL;
   }
   virtual bool isLeaf() { return false;}
+
+  virtual string serialize() { }
+
+  Rectangle *boundingBox() {
+    return bbox;
+  }
 
 };

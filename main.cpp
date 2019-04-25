@@ -12,13 +12,12 @@
 using namespace std;
 
 // import Models
-
 #include "model/Rectangle.h"
 #include "model/RTreeConf.h"
 #include "model/RTree.h"
 #include "model/RTreeLeaf.h"
 #include "model/RTreeNode.h"
-
+#include "utils/File.h"
 
 // import tests
 #include "testing/TestException.h"
