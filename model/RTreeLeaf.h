@@ -1,21 +1,30 @@
 using namespace std;
 #include <vector>
 
+
+
 class RTreeLeaf: public RTree {
 
   vector<Rectangle*> data;
 
 public:
 
-  Rectangle *insertRectangle(Rectangle *r){
-    RTree::insertRectangle(r);
-
+  RTree *insertRectangle(Rectangle *r){
     if(bbox == nullptr) {
       bbox = new Rectangle(r);
     }
+
     data.push_back(r);
     bbox->rebound(r);
+    // redimension if needed 
+
+    if (data.size() > conf::CONST_M) {
+      return this->split(conf::CONST_SPLIT_HEURISTIC);
+    }
+
+    return this;
   }
+
 
   vector<Rectangle> find(Rectangle *r){
     vector<Rectangle> res;
@@ -37,6 +46,90 @@ public:
     return sizee;
   }
 
+
+  /*************** split management algorithms ***************/
+  // void linearSplit2() {
+
+  //   // setup
+  //   RTree *newTree = new RTreeNode(); // parent tree
+  //   RTree *left = this; // reuse tree
+  //   RTree *right = new RTreeLeaf(); // new sibling tree
+
+
+  //   Rectangle *ini = v[0]->end();
+  //   Rectangle *end = v[v.size()-1]->ini();
+  //   vector<Rectangle*> remaining;
+
+  //   for(int i = 1; i < v.size()-1; i++) {
+  //     if(v[i]->end()->lessThan(ini))
+  //       ini = v[i]->end();
+  //     else if(v[i]->ini()->greatherThan(end))
+  //       end = v[i]->ini();
+  //     else
+  //       remaining.push_back(v[i]);
+  //   }
+
+  //   left->insertRectangle(min);
+  //   right->insertRectangle(max);
+
+  //   for(int i = 1; i < v.size()-1; i++) {
+  //     if ((v[i] != ini) && (v[i] != end))
+  //       root->insertRectangle(v[i])
+  //   }
+  // }
+
+  struct triplete {
+    double dist;
+    int i,j;
+  };
+
+  void linearSplit(RTree *left, RTree *right) {
+    triplete linearDist;
+    vector<Rectangle*> list = data;
+
+    double dist = list[0]->distance(list[1]);
+    linearDist.dist = dist;
+    linearDist.i = 0;
+    linearDist.j = 1;
+
+    for(int i = 1; i < list.size(); i++) {
+      for(int j = i+1; j < list.size(); j++) {
+        dist = list[i]->distance(list[j]);
+        if(linearDist.dist < dist){
+          linearDist.dist = dist;
+          linearDist.i = i;
+          linearDist.j = j;
+        }
+      }
+    }
+
+    if (linearDist.dist < 0) {
+      int tmp = linearDist.i;
+      linearDist.i = linearDist.j;
+      linearDist.j = tmp;
+    }
+
+    left->insertRectangle(list[linearDist.i]);
+    right->insertRectangle(list[linearDist.j]);
+
+    for(int i = 1; i < list.size()-1; i++) {
+      if ((list[i] != list[linearDist.i]) && (list[i] != list[linearDist.j]))
+        parent->insertRectangle(list[i]);
+    }
+  }
+
+
+  void quadraticSplit(vector<Rectangle*> *v, RTree *left, RTree *right) {
+    
+  }
+
+  
+  /********** miscelanious ***********/
+
+  virtual vector<Rectangle*> getBoundingBoxContent(){
+    return data;
+  }
+
   std::string serialize() {
     //header
     ostringstream output;
@@ -54,6 +147,18 @@ public:
 
   virtual void addRectangleSilently(Rectangle *r) {
     data.push_back(r);
+  }
+
+  virtual void replace(RTree *toBeReplaced, RTree *a, RTree *b) {
+    throw "should not get here RTreeLeaf, replace method";
+  }
+
+  RTree *newInstance(){
+    return new RTreeLeaf();
+  }
+
+  virtual RTree *newInstanceParent(){
+    return new RTreeNode(); 
   }
 
   static RTree *createInstance(string line) {
@@ -87,6 +192,5 @@ public:
 
     return t;
   }
-
 
 };

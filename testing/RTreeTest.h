@@ -3,11 +3,6 @@ using namespace std;
 class RTreeTest : public TestSuite {
 public:
 
-  void run(){
-
-    this->testBasic();
-    this->testInsertLeaf();
-  }
 
   /**********write tests*************/
 
@@ -38,16 +33,76 @@ public:
     assertTrue(b->equals(leaf->boundingBox()));
   }
 
+  void testConfigureEnv(){
+    setContext(__func__);
+
+    conf::CONST_m = 10;
+    assert(conf::CONST_m == 10);
+
+    conf::CONST_m = 49494;
+    assert(conf::CONST_m == 49494);
+    
+  }
+
   void testMultipleInsertLeaf(){
     setContext(__func__);
 
-    RTreeLeaf *leaf = new RTreeLeaf();
-    leaf->insert(1,1,2,2);
-    leaf->insert(1,1,2,2);
-    leaf->insert(1,1,2,2);
-    leaf->insert(1,1,2,2);
+    RTree *root = new RTreeLeaf();
+    conf::CONST_m = 2;
+    conf::CONST_M = 5;
+    
+    root->insert(1,1,2,2);
+    root->insert(1,1,2,2);
+    root->insert(-1,1,3,3);
+    root->insert(2,3,5,5);
+    root->insert(1,1,3,2);
+    Rectangle *b = new Rectangle(-1,1,5,5);
+    assertTrue(b->equals(root->boundingBox()));
+    assertTrue(root->isRoot());
 
-    assert(leaf);
+    RTree *newRoot = root->insert(1,1,3,6);
+    b = new Rectangle(-1,1,5,6);
+    assertTrue(b->equals(newRoot->boundingBox()));
+    assertTrue(newRoot->isRoot());
+    assertTrue(!root->isRoot());
+    assertTrue(newRoot->size() == 2);
   }
+
+  void testInsertNode() {
+
+    RTree *l = new RTreeLeaf();
+    RTree *r = new RTreeLeaf();
+    conf::CONST_m = 2;
+    conf::CONST_M = 5;
+    l->insert(1,1,2,2);
+    l->insert(1,2,3,3);
+
+    r->insert(7,7,8,8);
+    r->insert(7,8,9,9);
+
+    
+    RTree *root = new RTreeNode();
+    root->addNode(l);
+    root->addNode(r);
+
+    assert(l->size() == 2);
+    assert(r->size() == 2);
+
+    r->insert(7,6,8,8);
+
+    Rectangle *b = new Rectangle(7,6,9,9);
+    assertTrue(r->boundingBox()->equals(b));
+
+  }
+
+  // test configuration
+
+  void run(){
+    this->testBasic();
+    this->testInsertLeaf();
+    this->testConfigureEnv();
+    // this->testMultipleInsertLeaf();
+  }
+
 
 };

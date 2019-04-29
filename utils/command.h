@@ -23,6 +23,7 @@ namespace console{
         std::cout << "----- running tests -----" << endl;
         try{
           (new TestSuite())->run();
+          (new RectangleTest())->run();
           (new RTreeTest())->run();
           (new SerializeTest())->run();
 

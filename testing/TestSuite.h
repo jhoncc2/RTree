@@ -31,6 +31,10 @@ public :
         throwException();
     }
 
+    bool assertFalse(bool a) {
+      return assertTrue(!a);
+    }
+
     bool assert(bool a) {
       return assertTrue(a);
     }

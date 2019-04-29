@@ -6,14 +6,28 @@ class RTreeNode : public RTree {
 
 public:
 
-  Rectangle *insertRectangle(Rectangle *r){
-    return r;
+  RTree *insertRectangle(Rectangle *r){
+    int minArea = children[0]->expandedArea(r);
+    int index = 0;
+
+    for (int i =1; i < children.size(); i++) {
+      int area = children[i]->expandedArea(r);
+      if(minArea > area) {
+        index = i;
+        minArea = area;
+      }
+    }
+
+    children[index]->insertRectangle(r);
+
+    return this;
   }
 
   vector<Rectangle> find(Rectangle &r){
     vector<Rectangle> res;
     return res;
   }
+
   bool isRoot() {
     return parent == NULL;
   }
@@ -22,6 +36,13 @@ public:
     children.push_back(t);
   }
 
+  virtual vector<Rectangle*> getBoundingBoxContent(){
+    vector<Rectangle*> res;
+    for (int i =0; i<children.size(); i++) {
+      res.push_back(children[i]->boundingBox());
+    }
+    return res;  
+  }
 
   int size(){
     if (children.size() > sizee)
@@ -84,6 +105,32 @@ public:
 
   vector<RTree*> getChildren(){
     return children;
+  }
+
+  virtual RTree *newInstance(){
+    return new RTreeNode();
+  }
+
+  virtual RTree *newInstanceParent(){
+    return new RTreeNode(); 
+  }
+
+  virtual void replace(RTree *toBeReplaced, RTree *a, RTree *b) {
+    for(int i = 0; i < children.size(); i++) {
+      if (children.at(i) == toBeReplaced) {
+        children.at(i) = a;
+        children.push_back(b);
+        return;
+      }
+    }
+  }
+
+  virtual void addNode(RTree *t) {
+    children.push_back(t);
+  }
+
+  virtual void linearSplit(RTree *left, RTree *right){
+    //TODO
   }
 
 };

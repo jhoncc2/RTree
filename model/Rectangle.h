@@ -1,5 +1,6 @@
 using namespace std;
 #include <sstream>
+#include <cmath>
 
 class Point{
 public:
@@ -24,6 +25,21 @@ public:
     this->x = std::max(x, p->x);
     this->y = std::max(y, p->y);
   }
+
+  bool greatherThan(Point *point) {
+    int c = (x - point->x) + (y - point->y);
+    return c > 0;
+  }
+
+  bool lessThan(Point *point) {
+    int c = (x - point->x) + (y - point->y);
+    return c < 0;
+  }
+
+  double distance(Point *other) {
+    return sqrt(pow(2, this->x - other->x) + 
+                pow(2, this->y - other->y));
+  }
 };
 
 class Rectangle{
@@ -40,7 +56,7 @@ public:
     end = new Point(ex, ey);
   }
 
-  bool equals(Rectangle *r){
+  bool equals(Rectangle *r) {
     return (ini->x == r->ini->x) &&
       (ini->y == r->ini->y) &&
       (end->x == r->end->x) &&
@@ -52,12 +68,24 @@ public:
     end->keepMax(r->end);
   }
 
+  int area(){
+    return (ini->x - end->x) * (ini->y - end->y);
+  }
+
+  double distance(Rectangle *other) {
+    if(other->ini->lessThan(this->ini)) {
+      return -abs(other->end->distance(this->ini));
+    } else {
+      return abs(this->end->distance(other->ini));
+    }
+  }
+
   string serialize(){
     std::ostringstream output;
-    output << ini->x
-        << ',' << ini->y
-        << ',' << end->x
-        << ',' << end->y;
+    output << this->ini->x
+        << ',' << this->ini->y
+        << ',' << this->end->x
+        << ',' << this->end->y;
 
     return output.str();
   }
