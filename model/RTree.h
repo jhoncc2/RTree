@@ -22,6 +22,7 @@ public:
   }
 
   virtual RTree *split(int strategy){
+    // cout << "linearSplit";
     // setup
     if(parent == nullptr)
       parent = this->newInstanceParent(); // parent tree
@@ -39,6 +40,7 @@ public:
       // quadraticSplit();
     }
 
+    delete this;
     return parent;
   }
 

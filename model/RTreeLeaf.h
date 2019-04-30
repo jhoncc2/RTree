@@ -46,38 +46,6 @@ public:
     return sizee;
   }
 
-
-  /*************** split management algorithms ***************/
-  // void linearSplit2() {
-
-  //   // setup
-  //   RTree *newTree = new RTreeNode(); // parent tree
-  //   RTree *left = this; // reuse tree
-  //   RTree *right = new RTreeLeaf(); // new sibling tree
-
-
-  //   Rectangle *ini = v[0]->end();
-  //   Rectangle *end = v[v.size()-1]->ini();
-  //   vector<Rectangle*> remaining;
-
-  //   for(int i = 1; i < v.size()-1; i++) {
-  //     if(v[i]->end()->lessThan(ini))
-  //       ini = v[i]->end();
-  //     else if(v[i]->ini()->greatherThan(end))
-  //       end = v[i]->ini();
-  //     else
-  //       remaining.push_back(v[i]);
-  //   }
-
-  //   left->insertRectangle(min);
-  //   right->insertRectangle(max);
-
-  //   for(int i = 1; i < v.size()-1; i++) {
-  //     if ((v[i] != ini) && (v[i] != end))
-  //       root->insertRectangle(v[i])
-  //   }
-  // }
-
   struct triplete {
     double dist;
     int i,j;
@@ -112,9 +80,10 @@ public:
     left->insertRectangle(list[linearDist.i]);
     right->insertRectangle(list[linearDist.j]);
 
-    for(int i = 1; i < list.size()-1; i++) {
-      if ((list[i] != list[linearDist.i]) && (list[i] != list[linearDist.j]))
+    for(int i = 0; i < list.size(); i++) {
+      if ((list[i] != list[linearDist.i]) && (list[i] != list[linearDist.j])) {
         parent->insertRectangle(list[i]);
+      }
     }
   }
 

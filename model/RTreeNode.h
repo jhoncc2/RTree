@@ -45,10 +45,12 @@ public:
   }
 
   int size(){
-    if (children.size() > sizee)
-      sizee = children.size();
+    int s = 0;
+    for (int i =0; i<children.size(); i++) {
+      s = s + children[i]->size();
+    }
 
-    return sizee;
+    return s;
   }
 
 
@@ -116,6 +118,11 @@ public:
   }
 
   virtual void replace(RTree *toBeReplaced, RTree *a, RTree *b) {
+    if(children.empty()){
+      children.push_back(a);
+      children.push_back(b);
+      return;
+    }
     for(int i = 0; i < children.size(); i++) {
       if (children.at(i) == toBeReplaced) {
         children.at(i) = a;
