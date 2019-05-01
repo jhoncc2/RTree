@@ -10,17 +10,13 @@ public:
   SerializeTest() {
     tree = new RTree();
   }
-  void run(){
-    testSerializeLeaf();
-    testLoadLeaf();
-
-    testSerializeNode();
-  }
+  
 
   void testSerializeLeaf(){
     setContext(__func__);
+    conf::CONST_M = 5;
 
-    RTreeLeaf *leaf = new RTreeLeaf();
+    RTree *leaf = new RTreeLeaf();
     leaf->insert(1,1,2,2);
     leaf->insert(1,1,2,2);
     leaf->insert(-1,1,3,3);
@@ -48,7 +44,7 @@ public:
       assert(true);
 
     File::load(fname, leaf);
-    assert((leaf->size() == 4));
+    assert((leaf->getSize() == 4));
   }
 
   void testSerializeNode(){
@@ -96,8 +92,14 @@ public:
     //   assert(true);
 
     File::load(tree->getFilename(), tree);
-    assert((tree->getChildren()[1]->size() == 2));
-    assert((tree->size() == 2));
+    assert((tree->getChildren()[1]->getSize() == 2));
+    assert((tree->getSize() == 2));
+  }
+
+  void run(){
+    testSerializeLeaf();
+    testLoadLeaf();
+    testSerializeNode();
   }
 
 

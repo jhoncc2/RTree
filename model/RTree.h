@@ -8,40 +8,109 @@ protected:
   Rectangle *bbox = nullptr;
   RTree *parent = nullptr;
   string filename = "";
-  int sizee = 1;
+  int sizee = 0;
 
 public:
+
+  RTree (){
+  }
 
   virtual RTree *insert(int ix, int iy, int ex, int ey) {
     return insertRectangle(new Rectangle(ix, iy, ex, ey));
   }
+
 
   virtual RTree *insertRectangle(Rectangle *r){}
 
   virtual vector<Rectangle> find(Rectangle &r) {
   }
 
-  virtual RTree *split(int strategy){
-    // cout << "linearSplit";
-    // setup
-    if(parent == nullptr)
-      parent = this->newInstanceParent(); // parent tree
 
-    RTree *left = this->newInstance();
-    RTree *right = this->newInstance(); // new sibling tree
-
-    
-    parent->setBoundingBox(bbox);
-    parent->replace(this, left, right);
-
+  virtual RTree *split() {
+    int strategy = conf::CONST_SPLIT_HEURISTIC;
     if (strategy == conf::CONST_LINEAR_SPLIT) {
-      linearSplit(left,right);
+      return linearSplit();
     } else if (strategy == conf::CONST_QUADRATIC_SPLIT) {
       // quadraticSplit();
     }
+  }
 
-    delete this;
+
+  virtual RTree *getOrCreateParent() {
+    if(parent == nullptr) {
+      
+      return this->newInstanceParent(); // parent tree
+    }
     return parent;
+  }
+  struct triplete {
+    double dist;
+    int i,j;
+  };
+
+  /* split */
+  virtual double distance(RTree *r) {}
+  virtual void addNode(RTree *t) {}
+  // calculates the node where the area grows less, 
+  // look into the tree as deep as is defined in level
+  virtual void insertNode(RTree *t, int level) {}
+  virtual void addNodeSilently(RTree *t) {}
+
+  /* linear split */
+  virtual RTree *linearSplit(){}
+  virtual RTree* updateBoundingBoxSplitIfNeeded() {}
+  // virtual triplete* chooseAnchors(RTree *left, RTree *right){}
+  triplete* chooseAnchors(triplete *trip){}
+  /* end linear split */
+
+  // deprecated
+  // virtual RTree *split2(int strategy) {
+  //   // setup
+  //   RTree *treeParent = nullptr;
+  //   if(parent == nullptr) 
+  //     treeParent = this->newInstanceParent(); // parent tree
+  //   else 
+  //     treeParent = parent;
+    
+  //   RTree *left = this->newInstance();
+  //   RTree *right = this->newInstance(); // new sibling tree
+
+  //   treeParent->removeIfFound(this);
+  //   treeParent->addNode(left);
+  //   treeParent->addNode(right);
+
+
+  //   if (strategy == conf::CONST_LINEAR_SPLIT) {
+  //     linearSplit(treeParent, left, right);
+  //     this->multipleInsert();
+  //   } else if (strategy == conf::CONST_QUADRATIC_SPLIT) {
+  //     // quadraticSplit();
+  //   }
+
+  //   if(treeParent->getSize() > conf::CONST_M){
+  //     return (treeParent->split(strategy))->root();
+  //   } else {
+  //     return treeParent->root();
+  //   }
+
+  //   // parent->replace(this, left, right);
+    
+  // }
+
+  void rebound(RTree *t){
+
+    if(bbox == nullptr)
+      bbox = new Rectangle(t->boundingBox());
+
+    bbox->rebound(t->boundingBox());
+  }
+
+  RTree* root(){
+    if (this->isRoot()){
+      return this;
+    }
+    
+    return parent->root();
   }
 
   virtual int expandedArea(Rectangle *r){
@@ -52,20 +121,35 @@ public:
 
   virtual void replace(RTree *toBeReplaced, RTree *a, RTree *b){}
 
-  virtual void linearSplit(RTree *left, RTree *right){}
-
   virtual RTree *newInstance(){}
 
   virtual RTree *newInstanceParent(){}
 
   virtual vector<Rectangle*> getBoundingBoxContent(){}
 
-  virtual bool isRoot() {
-    return parent == NULL;
+  virtual bool isLeaf() { return false;}
+
+  virtual string serialize() { }
+
+  
+  virtual int height(){}
+
+  virtual void removeIfFound(RTree *t){}
+
+  virtual int treeSize() {}
+
+  virtual int getSize() {}
+
+  virtual int setSize(int size) {
+    this->sizee = size;
   }
 
-  virtual void setParent(RTree *r) {
-    parent = r;
+  Rectangle *boundingBox() {
+    return bbox;
+  }
+
+  void setBoundingBox(Rectangle *r) {
+    bbox = r;
   }
 
   void setFilename(string filename) {
@@ -76,24 +160,30 @@ public:
     return filename;
   }
 
-  virtual bool isLeaf() { return false;}
-  virtual int size() { return this->sizee;}
-  virtual int setSize(int size) {
-    this->sizee = size;
+  virtual bool isRoot() {
+    return parent == NULL;
   }
 
-  virtual string serialize() { }
-
-  Rectangle *boundingBox() {
-    return bbox;
+  virtual bool isNode() {
+    return true;
   }
 
-  virtual void addNode(RTree *t) {}
-
-  void setBoundingBox(Rectangle *r) {
-    bbox = r;
+  virtual void setParent(RTree *r) {
+    parent = r;
   }
 
+  virtual RTree* getParent() {
+    return parent;
+  }
 
+  virtual bool isFull() {
+    return this->getSize() == conf::CONST_M;
+  }
+
+  void logTree(){
+    this->printTree("-");
+  }
+  virtual void printTree(string prefix) {}
+  
 };
 

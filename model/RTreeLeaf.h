@@ -19,10 +19,10 @@ public:
     // redimension if needed 
 
     if (data.size() > conf::CONST_M) {
-      return this->split(conf::CONST_SPLIT_HEURISTIC);
+      return this->split()->root();
     }
 
-    return this;
+    return this->root();
   }
 
 
@@ -39,19 +39,83 @@ public:
     return true;
   }
 
-  int size(){
-    if (data.size() > sizee)
-      sizee = data.size();
-
-    return sizee;
+  int getSize() {
+    return data.size();
   }
 
-  struct triplete {
-    double dist;
-    int i,j;
-  };
+  int treeSize(){
+    return data.size();
+  }
 
-  void linearSplit(RTree *left, RTree *right) {
+  virtual int height(){
+    return 1;
+  }
+
+  RTree* linearSplit() {
+    cout << "leaf split "  << bbox->serialize() << parent << endl;
+    RTree *left, *right, *localRoot;
+    triplete trip;
+    this->chooseAnchors(&trip);
+    cout << trip.i << " - " << trip.j << endl;
+    cout << data[trip.i] << " - " << data[trip.j] << endl;
+    
+    // fill up new neightbors
+    localRoot = getOrCreateParent();
+    left = this->newInstance();
+    right = this->newInstance();
+    left->insertRectangle(data[trip.i]);
+    right->insertRectangle(data[trip.j]);
+
+    // create structure
+    localRoot->removeIfFound(this);
+    localRoot->addNodeSilently(left);
+    localRoot->addNodeSilently(right);
+    localRoot->rebound(left);
+    localRoot->rebound(right);
+
+    // localRoot = localRoot->updateBoundingBoxSplitIfNeeded();
+    
+    // fill remaining data
+    for(int i = 0; i < data.size(); i++) {
+      if ((i != trip.i) && (i != trip.j)) {
+        cout << i << ", " ;
+        localRoot->insertRectangle(data[i]);
+      }
+    }
+    cout << endl;
+
+    delete this;
+    if(localRoot->getSize() > conf::CONST_M) {
+      return parent->split();
+    }
+    return localRoot->root();
+  }
+
+  triplete* chooseAnchors(triplete *trip){
+    vector<Rectangle*> list = data;
+
+    double dist = list[0]->distance(list[1]);
+    trip->dist = dist;
+    trip->i = 0;
+    trip->j = 1;
+
+    for(int i = 1; i < list.size(); i++) {
+      for(int j = i+1; j < list.size(); j++) {
+        dist = list[i]->distance(list[j]);
+        if(trip->dist < dist){
+          trip->dist = dist;
+          trip->i = i;
+          trip->j = j;
+        }
+      }
+    }
+
+    return trip;
+    // left->insertRectangle(list[linearDist.i]);
+    // right->insertRectangle(list[linearDist.j]);
+  }
+
+  void linearSplit2(RTree *resParent, RTree *left, RTree *right) {
     triplete linearDist;
     vector<Rectangle*> list = data;
 
@@ -71,26 +135,12 @@ public:
       }
     }
 
-    if (linearDist.dist < 0) {
-      int tmp = linearDist.i;
-      linearDist.i = linearDist.j;
-      linearDist.j = tmp;
-    }
-
     left->insertRectangle(list[linearDist.i]);
     right->insertRectangle(list[linearDist.j]);
 
-    for(int i = 0; i < list.size(); i++) {
-      if ((list[i] != list[linearDist.i]) && (list[i] != list[linearDist.j])) {
-        parent->insertRectangle(list[i]);
-      }
-    }
   }
 
-
-  void quadraticSplit(vector<Rectangle*> *v, RTree *left, RTree *right) {
-    
-  }
+  void quadraticSplit(vector<Rectangle*> *v, RTree *left, RTree *right) {}
 
   
   /********** miscelanious ***********/
@@ -118,10 +168,6 @@ public:
     data.push_back(r);
   }
 
-  virtual void replace(RTree *toBeReplaced, RTree *a, RTree *b) {
-    throw "should not get here RTreeLeaf, replace method";
-  }
-
   RTree *newInstance(){
     return new RTreeLeaf();
   }
@@ -134,9 +180,6 @@ public:
     std::istringstream iss(line);
     std::string segment;
 
-    // cout << line << endl;
-    // std::getline(iss, segment, ',');
-    // int a = std::stoi(segment, nullptr); // is leaf
     std::getline(iss, segment, ',');
     int b = std::stoi(segment, nullptr); // number of elements
     std::getline(iss, segment, ',');
@@ -151,9 +194,6 @@ public:
     std::getline(iss, segment, ',');
     int ey = std::stoi(segment, nullptr);
 
-    // std::cout << touple << endl;
-    // std::cout << i << "-" << n << "-" << r << endl;
-
     RTree *t = new RTreeLeaf();
     t->setBoundingBox(new Rectangle(ix,iy,ex,ey));
     t->setFilename(c);
@@ -162,4 +202,29 @@ public:
     return t;
   }
 
+
+  virtual void replace(RTree *toBeReplaced, RTree *a, RTree *b) {
+    throw "should not get here RTreeLeaf, replace method";
+  }
+  virtual void removeIfFound(RTree *b) {
+    throw "should not get here RTreeLeaf, replace method";
+  }
+  virtual void addNode(RTree *b) {
+    throw "should not get here RTreeLeaf, replace method";
+  }
+
+  virtual bool isNode() {
+    return false;
+  }
+
+  virtual void printTree(string prefix) {
+    cout << prefix << "(" << bbox->serialize() << ")" <<endl;
+    for (int i = 0; i < data.size(); ++i){
+      cout << prefix << prefix << "[" << data[i]->serialize() << "]" <<endl;
+    }
+    
+  }
+
+
 };
+

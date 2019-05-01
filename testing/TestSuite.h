@@ -14,6 +14,7 @@ public :
 
     void setContext(const char *funName){
       context = funName;
+      cout << "************* Running " << funName << "*************" << endl;
     }
 
     virtual void run() {
@@ -60,11 +61,5 @@ public :
       throw TestException(logstream.str().c_str());
     }
 
-    // bool assertVector(vector<T> a, vector<T> b) {
-    //   for (int i=0; i<a.size(); i++){
-    //
-    //   }
-    //   return  a.size() == b.size();
-    // }
 
 };
