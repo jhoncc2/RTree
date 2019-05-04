@@ -4,9 +4,9 @@ using namespace std;
 
 class Point{
 public:
-  int x,y;
+  float x,y;
 
-  Point(int x, int y)  {
+  Point(float x, float y)  {
     this->x = x;
     this->y = y;
   }
@@ -51,7 +51,7 @@ public:
     end = new Point(r->end);
   }
 
-  Rectangle(int ix, int iy, int ex, int ey) {
+  Rectangle(float ix, float iy, float ex, float ey) {
     ini = new Point(ix, iy);
     end = new Point(ex, ey);
   }
