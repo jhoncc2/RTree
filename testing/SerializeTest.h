@@ -100,7 +100,7 @@ public:
     assert((tree->getChildren()[1]->getSize() == 2)); 
     assert((tree->getSize() == 2));
     assert((tree->height() == 2));
-    
+
   }
 
   void randomGererationAndSerialize() {
@@ -117,12 +117,13 @@ public:
     cout << root->height() << endl;
     assertTrue(root->height() >= 3);
     root->setFilename("tmp/root.dat");
-
+    root->logTree();
     File::storeTree(root, 3);
-    // root->logTree();
+    // 
     // //
-    // RTree *storedRoot = File::loadFromFile(root->getFilename(), 3);
-    // assertTrue(root->equals(storedRoot));
+    RTree *storedRoot = File::loadFromFile(root->getFilename(), 10);
+    storedRoot->logTree();
+    assertTrue(root->equals(storedRoot));
   }
 
   void run(){

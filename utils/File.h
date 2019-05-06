@@ -26,19 +26,19 @@ public:
     if(deepness == 0)
        return;
 
+    
     // recursive step
     RTreeNode *node;
-    if (deepness > 1 && !tree->isLeaf()) 
+    if (deepness > 1 && !tree->isLeaf()) {
       node = dynamic_cast<RTreeNode*>(tree);
       vector<RTree*> children = node->getChildren();
       for (int i = 0; i < children.size(); ++i) {
-        children[i]->setFilename(node->getFilename().append(std::to_string(i)));
+        children[i]->setFilename(tree->getFilename() + to_string(i));
         storeTree(children[i], deepness-1);
       }
-
+    }
     // store
     store(tree);
-
   }
 
   static RTree* loadFromFile(string filename, int deepness) {
@@ -47,14 +47,17 @@ public:
     file.open(filename.c_str(), ios::in);
 
     // reading header
-    Header header = readHeader(line);// remove header
+    
+    getline(file, line);// read first line 
+    file.close();
+    Header header = readHeader(line);// load header
     RTree* tree;
-
     if(header.isLeaf)
       tree = new RTreeLeaf();
     else 
       tree = new RTreeNode();
 
+    tree->setFilename(filename);
     loadTreeChildren(tree, deepness-1);
     tree->updateBoundingBox();
     return tree;
@@ -64,6 +67,7 @@ public:
   static void loadTreeChildren(RTree *tree, int deepness) {
     if (deepness == 0) 
       return;
+
     string line;
     ifstream file;
     file.open(tree->getFilename().c_str(), ios::in);
@@ -85,7 +89,7 @@ public:
           n->addNodeSilently(tmpl);
 
           // recursive load
-          if (deepness>1)
+          if (deepness>0)
             loadTreeChildren(tmpl, deepness-1);
         }
       } else {
@@ -94,7 +98,7 @@ public:
           n->addNodeSilently(tmpl);
 
           // recursive load
-          if (deepness>1)
+          if (deepness>0)
             loadTreeChildren(tmpl, deepness-1);
         }
       }
@@ -111,8 +115,7 @@ public:
   static Header readHeader(string line) {
     std::istringstream iss(line);
     std::string segment;
-    // cout << line << endl;
-
+    
     std::getline(iss, segment, ',');
     bool isLeaf = std::stoi(segment, nullptr);
     std::getline(iss, segment, ',');

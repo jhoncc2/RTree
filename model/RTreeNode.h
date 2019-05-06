@@ -70,7 +70,7 @@ public:
   std::string serialize() {
     //header
     ostringstream output;
-    output << 1
+    output << this->isLeaf()
         << ',' << children[0]->isLeaf()
         << ',' << children.size()
         << endl;
@@ -94,8 +94,8 @@ public:
     std::string segment;
 
     // cout << line << endl;
-    std::getline(iss, segment, ',');
-    int a = std::stoi(segment, nullptr); // is leaf
+    // std::getline(iss, segment, ',');
+    // int a = std::stoi(segment, nullptr); // is leaf
     std::getline(iss, segment, ',');
     int b = std::stoi(segment, nullptr); // number of elements
     std::getline(iss, segment, ',');
@@ -318,9 +318,11 @@ public:
   }
 
   virtual bool equals(RTree *other) {
-    return !other->isLeaf() 
-          && bbox->equals(other->boundingBox()) 
-          && getSize() == getSize();
+    // return (!other->isLeaf())
+    //       && (bbox->equals(other->boundingBox())) 
+    //       && (getSize() == other->getSize());
+
+    return (!other->isLeaf()) && (bbox->equals(other->boundingBox())) ;
   }
 
 };

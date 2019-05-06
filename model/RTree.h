@@ -129,7 +129,7 @@ public:
 
   virtual vector<Rectangle*> getBoundingBoxContent(){}
 
-  virtual bool isLeaf() { return false;}
+  virtual bool isLeaf() { return false; }
 
   virtual string serialize() { }
   virtual string serializeTree() { }

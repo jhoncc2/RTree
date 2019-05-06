@@ -42,8 +42,14 @@ public:
   }
 
   bool equals(Point *r) {
-    return (this->x == r->x) &&
-      (this->y == r->y);
+    return isEqual(x, r->x) &&
+            isEqual(y, r->y);
+  }
+
+  inline bool isEqual(double x, double y) {
+    const double epsilon = 0.0001;/* some small number such as 1e-5 */
+    return std::abs(x - y) <= epsilon * std::abs(x);
+    // see Knuth section 4.2.2 pages 217-218
   }
 };
 
@@ -67,10 +73,8 @@ public:
   }
 
   bool equals(Rectangle *r) {
-    return (ini->x == r->ini->x) &&
-      (ini->y == r->ini->y) &&
-      (end->x == r->end->x) &&
-      (end->y == r->end->y);
+    return ini->equals(r->ini) &&
+        end->equals(r->end);
   }
 
   void rebound(Rectangle *r){
@@ -121,13 +125,13 @@ public:
 
     
     std::getline(iss, segment, ',');
-    float a = std::stoi(segment, nullptr);
+    float a = std::stof(segment, nullptr);
     std::getline(iss, segment, ',');
-    float b = std::stoi(segment, nullptr);
+    float b = std::stof(segment, nullptr);
     std::getline(iss, segment, ',');
-    float c = std::stoi(segment, nullptr);
+    float c = std::stof(segment, nullptr);
     std::getline(iss, segment, ',');
-    float d = std::stoi(segment, nullptr);
+    float d = std::stof(segment, nullptr);
     // std::cout << touple << endl;
     // std::cout << i << "-" << n << "-" << r << endl;
 
