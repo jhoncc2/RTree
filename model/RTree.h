@@ -98,7 +98,6 @@ public:
   // }
 
   void rebound(RTree *t){
-
     if(bbox == nullptr)
       bbox = new Rectangle(t->boundingBox());
 
@@ -113,7 +112,10 @@ public:
     return parent->root();
   }
 
-  virtual int expandedArea(Rectangle *r){
+  /*
+  * Current node bounding box expanded area 
+  */ 
+  virtual float expandedArea(Rectangle *r){
     Rectangle *rect = new Rectangle(bbox);
     rect->rebound(r);
     return rect->area();
@@ -130,7 +132,7 @@ public:
   virtual bool isLeaf() { return false;}
 
   virtual string serialize() { }
-
+  virtual string serializeTree() { }
   
   virtual int height(){}
 
@@ -184,6 +186,10 @@ public:
     this->printTree("-");
   }
   virtual void printTree(string prefix) {}
+
+  virtual void updateBoundingBox() {}
+
+  virtual bool equals(RTree *other) {}
   
 };
 

@@ -39,6 +39,10 @@ public:
     return true;
   }
 
+  vector<Rectangle*> getData() {
+    return data;
+  }
+
   int getSize() {
     return data.size();
   }
@@ -56,8 +60,8 @@ public:
     RTree *left, *right, *localRoot;
     triplete trip;
     this->chooseAnchors(&trip);
-    cout << trip.i << " - " << trip.j << endl;
-    cout << data[trip.i] << " - " << data[trip.j] << endl;
+    // cout << trip.i << " - " << trip.j << endl;
+    // cout << data[trip.i] << " - " << data[trip.j] << endl;
     
     // fill up new neightbors
     localRoot = getOrCreateParent();
@@ -78,11 +82,10 @@ public:
     // fill remaining data
     for(int i = 0; i < data.size(); i++) {
       if ((i != trip.i) && (i != trip.j)) {
-        cout << i << ", " ;
         localRoot->insertRectangle(data[i]);
       }
     }
-    cout << endl;
+    
 
     delete this;
     if(localRoot->getSize() > conf::CONST_M) {
@@ -152,7 +155,8 @@ public:
   std::string serialize() {
     //header
     ostringstream output;
-    output << 1
+    output << this->isLeaf()
+        << ',' << 3 // rectangles, not used
         << ',' << data.size()
         << endl;
 
@@ -186,13 +190,13 @@ public:
     string c = segment; // filename
     // boudning box
     std::getline(iss, segment, ',');
-    int ix = std::stoi(segment, nullptr);
+    float ix = std::stof(segment, nullptr);
     std::getline(iss, segment, ',');
-    int iy = std::stoi(segment, nullptr);
+    float iy = std::stof(segment, nullptr);
     std::getline(iss, segment, ',');
-    int ex = std::stoi(segment, nullptr);
+    float ex = std::stof(segment, nullptr);
     std::getline(iss, segment, ',');
-    int ey = std::stoi(segment, nullptr);
+    float ey = std::stof(segment, nullptr);
 
     RTree *t = new RTreeLeaf();
     t->setBoundingBox(new Rectangle(ix,iy,ex,ey));
@@ -225,6 +229,18 @@ public:
     
   }
 
+  void updateBoundingBox() {
+    for(int i = 0; i < data.size(); i++) {
+      bbox->rebound(data.at(i));
+    }
+  }
+
+
+  virtual bool equals(RTree *other) {
+    return other->isLeaf() 
+          && bbox->equals(other->boundingBox()) 
+          && getSize() == getSize();
+  }
 
 };
 

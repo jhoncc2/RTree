@@ -12,11 +12,11 @@ public:
   RTree *insertRectangle(Rectangle *r){
     bbox->rebound(r);
 
-    int minArea = children[0]->expandedArea(r);
+    float minArea = children[0]->expandedArea(r);
     int index = 0;
 
     for (int i =1; i < children.size(); i++) {
-      int area = children[i]->expandedArea(r);
+      float area = children[i]->expandedArea(r);
       if(minArea > area) {
         index = i;
         minArea = area;
@@ -67,20 +67,22 @@ public:
     return s;
   }
 
-
   std::string serialize() {
     //header
     ostringstream output;
     output << 1
+        << ',' << children[0]->isLeaf()
         << ',' << children.size()
         << endl;
 
     //body
     for(int i = 0; i< children.size(); i++) {
-      output << children[i]->isLeaf()
-          << "," << children[i]->getSize()
-          << "," << children[i]->getFilename()
-          << "," << children[i]->boundingBox()->serialize()
+      output 
+          // << this->isLeaf() << ","
+          // << children[i]->isLeaf() << ","
+          << children[i]->getSize() << ","
+          << children[i]->getFilename() << ","
+          << children[i]->boundingBox()->serialize()
           << endl;
     }
 
@@ -92,21 +94,24 @@ public:
     std::string segment;
 
     // cout << line << endl;
-    // std::getline(iss, segment, ',');
-    // int a = std::stoi(segment, nullptr); // is leaf
+    std::getline(iss, segment, ',');
+    int a = std::stoi(segment, nullptr); // is leaf
     std::getline(iss, segment, ',');
     int b = std::stoi(segment, nullptr); // number of elements
     std::getline(iss, segment, ',');
     string c = segment; // filename
+
+    cout << c << endl;
+
     // boudning box
     std::getline(iss, segment, ',');
-    int ix = std::stoi(segment, nullptr);
+    float ix = std::stof(segment, nullptr);
     std::getline(iss, segment, ',');
-    int iy = std::stoi(segment, nullptr);
+    float iy = std::stof(segment, nullptr);
     std::getline(iss, segment, ',');
-    int ex = std::stoi(segment, nullptr);
+    float ex = std::stof(segment, nullptr);
     std::getline(iss, segment, ',');
-    int ey = std::stoi(segment, nullptr);
+    float ey = std::stof(segment, nullptr);
 
     // std::cout << touple << endl;
     // std::cout << i << "-" << n << "-" << r << endl;
@@ -209,11 +214,11 @@ public:
 
     bbox->rebound(r->boundingBox());
 
-    int minArea = children[0]->expandedArea(r->boundingBox());
+    float minArea = children[0]->expandedArea(r->boundingBox());
     int index = 0;
 
     for (int i =1; i < children.size(); i++) {
-      int area = children[i]->expandedArea(r->boundingBox());
+      float area = children[i]->expandedArea(r->boundingBox());
       if(minArea > area) {
         index = i;
         minArea = area;
@@ -290,13 +295,17 @@ public:
   // updates the bouding box with children bouding box, 
   // and triggers split if ecceeds the size in conf::CONST_M
   virtual RTree* updateBoundingBoxSplitIfNeeded() {
-    for(int i = 0; i < children.size(); i++) {
-      this->rebound(children.at(i));
-    }
+    updateBoundingBox();
     if (children.size() > conf::CONST_M)
       return this->split();
 
     return this;
+  }
+
+  void updateBoundingBox() {
+    for(int i = 0; i < children.size(); i++) {
+      this->rebound(children.at(i));
+    }
   }
 
 
@@ -306,6 +315,12 @@ public:
     for (int i = 0; i < children.size(); ++i){
       children[i]->printTree(prefix + prefix);
     }
+  }
+
+  virtual bool equals(RTree *other) {
+    return !other->isLeaf() 
+          && bbox->equals(other->boundingBox()) 
+          && getSize() == getSize();
   }
 
 };

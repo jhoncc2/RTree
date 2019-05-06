@@ -21,10 +21,10 @@ public:
     leaf->insert(1,1,2,2);
     leaf->insert(-1,1,3,3);
     leaf->insert(2,3,5,5);
+    leaf->setFilename("tmp/tempfile.data");
 
-    string fname = "tmp/tempfile.data";
-    ifstream f(fname.c_str());
-    File::store(fname, leaf);
+    File::store(leaf);
+    ifstream f(leaf->getFilename().c_str());
     // if(f.fail()) // hack
     //   assert(true);
     // else
@@ -36,14 +36,19 @@ public:
     setContext(__func__);
 
     RTreeLeaf *leaf = new RTreeLeaf();
+    leaf->setFilename("tmp/tempfile.data");
 
-    string fname = "tmp/tempfile.data";
-    ifstream f(fname.c_str());
+    ifstream f(leaf->getFilename().c_str());
 
     if(f.fail()) // hack
       assert(true);
 
-    File::load(fname, leaf);
+    File::loadTreeChildren(leaf, 1);
+    // leaf->logTree();
+
+    Rectangle *bbox = new Rectangle(-1,1,5,5);
+    assertTrue(bbox->equals(bbox));
+
     assert((leaf->getSize() == 4));
   }
 
@@ -70,9 +75,9 @@ public:
     // string fname = "tmp/tempfile.data";
     ifstream f(n->getFilename().c_str());
 
-    File::store(n->getFilename(), n);
-    File::store(leaf1->getFilename(), leaf1);
-    File::store(leaf2->getFilename(), leaf2);
+    File::store(n);
+    File::store(leaf1);
+    File::store(leaf2);
 
     // if(f.fail()) // hack
     //   assert(true);
@@ -91,9 +96,11 @@ public:
     // if(f.fail()) // hack
     //   assert(true);
 
-    File::load(tree->getFilename(), tree);
-    assert((tree->getChildren()[1]->getSize() == 2));
+    File::loadTreeChildren(tree, 1);
+    assert((tree->getChildren()[1]->getSize() == 2)); 
     assert((tree->getSize() == 2));
+    assert((tree->height() == 2));
+    
   }
 
   void randomGererationAndSerialize() {
@@ -102,13 +109,20 @@ public:
     conf::CONST_M = 5;
 
 
-    RTree *root = new RTreeNode();
-    for (int i = 0; i < 11; ++i){
-      cout << "iteration " << endl;
+    RTree *root = new RTreeLeaf();
+    for (int i = 0; i < 26; ++i){
       root = root->insertRectangle(Rectangle::createRandom());
       assertTrue(root->isRoot());
     }
-    // assertTrue(root->height() >= 3);
+    cout << root->height() << endl;
+    assertTrue(root->height() >= 3);
+    root->setFilename("tmp/root.dat");
+
+    File::storeTree(root, 3);
+    // root->logTree();
+    // //
+    // RTree *storedRoot = File::loadFromFile(root->getFilename(), 3);
+    // assertTrue(root->equals(storedRoot));
   }
 
   void run(){

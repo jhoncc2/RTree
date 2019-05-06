@@ -17,8 +17,8 @@ public:
   }
 
   void keepMin(Point *p) {
-    this->x = std::min(x, p->x);
-    this->y = std::min(y, p->y);
+    this->x = std::min(this->x, p->x);
+    this->y = std::min(this->y, p->y);
   }
 
   void keepMax(Point *p) {
@@ -27,12 +27,12 @@ public:
   }
 
   bool greatherThan(Point *point) {
-    int c = (x - point->x) + (y - point->y);
+    float c = (x - point->x) + (y - point->y);
     return c > 0;
   }
 
   bool lessThan(Point *point) {
-    int c = (x - point->x) + (y - point->y);
+    float c = (x - point->x) + (y - point->y);
     return c < 0;
   }
 
@@ -78,7 +78,7 @@ public:
     end->keepMax(r->end);
   }
 
-  int area(){
+  float area(){
     return (ini->x - end->x) * (ini->y - end->y);
   }
 
