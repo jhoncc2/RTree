@@ -8,11 +8,9 @@ public:
 
   RTreeNode(): RTree() {
   }
-  
 
   RTree *insertRectangle(Rectangle *r){
     bbox->rebound(r);
-    loadIfNot();
 
     float minArea = children[0]->expandedArea(r);
     int index = 0;
