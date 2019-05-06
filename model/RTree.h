@@ -199,6 +199,52 @@ public:
 
   virtual bool equals(RTree *other) {}
 
-  
+  virtual triplete minMax(vector<float> minlist,
+                          vector<float> maxlist, 
+                          int min, 
+                          int max, 
+                          int ratio) {
+    triplete t;
+    if(abs(max - min) <= 1){
+      
+      // calculate min
+      t.i= min; 
+      if (minlist[min] > minlist[max]){
+        t.i = max;
+      }
+
+      // calculate max
+      t.j= max;
+      if (maxlist[min] > maxlist[max]){
+        t.j = min;
+      }
+      
+      t.dist = maxlist[t.j] - minlist[t.i];
+      
+
+    } else {
+      int div = (min + max) /2;
+
+      triplete t1 = minMax(minlist, maxlist, min, div-1, ratio);
+      triplete t2 = minMax(minlist, maxlist, div, max, ratio);
+
+      // calculate min
+      t.i = t2.i;
+      if (minlist[t1.i] < minlist[t2.i]){
+        t.i = t1.i;
+      }
+        
+      // calculate max
+      t.j = t1.j;
+      if (maxlist[t1.j] < maxlist[t2.j]){
+        t.j = t2.j;
+      }
+
+      t.dist = maxlist[t.j] - minlist[t.i];
+      
+    }
+
+    return t;
+  }
 };
 

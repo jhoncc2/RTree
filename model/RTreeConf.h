@@ -14,4 +14,7 @@ namespace conf  {
     int CONST_m = 10;
     int CONST_M = 100;
     int CONST_SPLIT_HEURISTIC = CONST_LINEAR_SPLIT;
+
+    // secondary memory
+    bool conf::CONST_SECOND_MEMORY = true;
 }

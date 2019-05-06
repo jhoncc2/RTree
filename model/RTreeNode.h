@@ -243,27 +243,35 @@ public:
 
   triplete* chooseAnchorsLinear(triplete *trip){
     // calculate distance between nodes (it uses its bounding boxes)
-    double dist = children[0]->distance(children[1]);
-    trip->dist = dist;
-    trip->i = 0;
-    trip->j = 1;
 
-    for(int i = 1; i < children.size(); i++) {
-      for(int j = i+1; j < children.size(); j++) {
-        dist = children[i]->distance(children[j]);
-        if(trip->dist < dist){
-          trip->dist = dist;
-          trip->i = i;
-          trip->j = j;
-        }
-      }
+    vector<float> initialx;
+    vector<float> endingx;
+    vector<float> initialy;
+    vector<float> endingy;
+
+    for (int i = 0; i < children.size(); ++i) {
+      initialx.push_back(children[i]->boundingBox()->ini->x);
+      endingx.push_back(children[i]->boundingBox()->end->x);
+
+      initialy.push_back(children[i]->boundingBox()->ini->y);
+      endingy.push_back(children[i]->boundingBox()->end->y);
     }
+
+    triplete t1 = minMax(endingx, initialx, 0, children.size()-1, bbox->end->x - bbox->ini->x);
+    triplete t2 = minMax(endingy, initialy, 0, children.size()-1, bbox->end->y - bbox->ini->y);
+
+    trip->dist = t1.dist;
+    trip->i = t1.i;
+    trip->j = t1.j;
+    if (t1.dist < t2.dist) {
+      trip->dist = t2.dist;
+      trip->i = t2.i;
+      trip->j = t2.j;
+    }
+
     return trip;
   }
-
-  triplete findMinX(vector<float> list, list ) {
-
-  }
+  
 
   triplete* chooseAnchorsQuadratic(triplete *trip){
     // calculate unusefulArea between nodes (it uses its bounding boxes)
