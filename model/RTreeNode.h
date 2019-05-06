@@ -168,11 +168,15 @@ public:
       return this->getBoundingBoxContent();
   }
 
-  double distance (RTree *other) {
+  double distance(RTree *other) {
     return this->boundingBox()->distance(other->boundingBox());
   }
 
-  RTree* linearSplit(){
+  double unusefulArea(RTree *other) {
+    return this->boundingBox()->unusefulArea(other->boundingBox());
+  }
+
+  RTree* split(){
     RTree *left, *right, *parent;
     triplete trip;
     this->chooseAnchors(&trip);
@@ -228,8 +232,61 @@ public:
     children[index]->insertNode(r, level-1);
   }
 
-
   triplete* chooseAnchors(triplete *trip){
+    int strategy = conf::CONST_SPLIT_HEURISTIC;
+    if (strategy == conf::CONST_LINEAR_SPLIT) {
+      return chooseAnchorsLinear(trip);
+    } else if (strategy == conf::CONST_QUADRATIC_SPLIT) {
+      return chooseAnchorsQuadratic(trip);
+    }
+  }
+
+  triplete* chooseAnchorsLinear(triplete *trip){
+    // calculate distance between nodes (it uses its bounding boxes)
+    double dist = children[0]->distance(children[1]);
+    trip->dist = dist;
+    trip->i = 0;
+    trip->j = 1;
+
+    for(int i = 1; i < children.size(); i++) {
+      for(int j = i+1; j < children.size(); j++) {
+        dist = children[i]->distance(children[j]);
+        if(trip->dist < dist){
+          trip->dist = dist;
+          trip->i = i;
+          trip->j = j;
+        }
+      }
+    }
+    return trip;
+  }
+
+  triplete findMinX(vector<float> list, list ) {
+
+  }
+
+  triplete* chooseAnchorsQuadratic(triplete *trip){
+    // calculate unusefulArea between nodes (it uses its bounding boxes)
+    double dist = children[0]->unusefulArea(children[1]);
+    trip->dist = dist;
+    trip->i = 0;
+    trip->j = 1;
+
+    for(int i = 1; i < children.size(); i++) {
+      for(int j = i+1; j < children.size(); j++) {
+        dist = children[i]->unusefulArea(children[j]);
+        if(trip->dist < dist){
+          trip->dist = dist;
+          trip->i = i;
+          trip->j = j;
+        }
+      }
+    }
+
+    return trip;
+  }
+
+  triplete* chooseAnchorsExtra(triplete *trip){
     // calculate distance between nodes (it uses its bounding boxes)
     double dist = children[0]->distance(children[1]);
     trip->dist = dist;

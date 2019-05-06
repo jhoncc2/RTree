@@ -55,7 +55,7 @@ public:
     return 1;
   }
 
-  RTree* linearSplit() {
+  RTree* split() {
     cout << "leaf split "  << bbox->serialize() << parent << endl;
     RTree *left, *right, *localRoot;
     triplete trip;
@@ -95,6 +95,63 @@ public:
   }
 
   triplete* chooseAnchors(triplete *trip){
+    int strategy = conf::CONST_SPLIT_HEURISTIC;
+    if (strategy == conf::CONST_LINEAR_SPLIT) {
+      return chooseAnchorsLinear(trip);
+    } else if (strategy == conf::CONST_QUADRATIC_SPLIT) {
+      return chooseAnchorsQuadratic(trip);
+    }
+  }
+
+  triplete* chooseAnchorsLinear(triplete *trip){
+    vector<Rectangle*> list = data;
+
+    double dist = list[0]->distance(list[1]);
+    trip->dist = dist;
+    trip->i = 0;
+    trip->j = 1;
+
+    for(int i = 1; i < list.size(); i++) {
+      for(int j = i+1; j < list.size(); j++) {
+        dist = list[i]->distance(list[j]);
+        if(trip->dist < dist){
+          trip->dist = dist;
+          trip->i = i;
+          trip->j = j;
+        }
+      }
+    }
+
+    return trip;
+    // left->insertRectangle(list[linearDist.i]);
+    // right->insertRectangle(list[linearDist.j]);
+  }
+
+  triplete* chooseAnchorsQuadratic(triplete *trip){
+    vector<Rectangle*> list = data;
+
+    double dist = list[0]->unusefulArea(list[1]);
+    trip->dist = dist;
+    trip->i = 0;
+    trip->j = 1;
+
+    for(int i = 1; i < list.size(); i++) {
+      for(int j = i+1; j < list.size(); j++) {
+        dist = list[i]->unusefulArea(list[j]);
+        if(trip->dist < dist){
+          trip->dist = dist;
+          trip->i = i;
+          trip->j = j;
+        }
+      }
+    }
+
+    return trip;
+    // left->insertRectangle(list[linearDist.i]);
+    // right->insertRectangle(list[linearDist.j]);
+  }
+
+  triplete* chooseAnchorsExtra(triplete *trip){
     vector<Rectangle*> list = data;
 
     double dist = list[0]->distance(list[1]);

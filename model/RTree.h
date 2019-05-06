@@ -26,14 +26,14 @@ public:
   }
 
 
-  virtual RTree *split() {
-    int strategy = conf::CONST_SPLIT_HEURISTIC;
-    if (strategy == conf::CONST_LINEAR_SPLIT) {
-      return linearSplit();
-    } else if (strategy == conf::CONST_QUADRATIC_SPLIT) {
-      // quadraticSplit();
-    }
-  }
+  // virtual RTree *split() {
+  //   int strategy = conf::CONST_SPLIT_HEURISTIC;
+  //   if (strategy == conf::CONST_LINEAR_SPLIT) {
+  //     return treeSplit();
+  //   } else if (strategy == conf::CONST_QUADRATIC_SPLIT) {
+  //     // quadraticSplit();
+  //   }
+  // }
 
 
   virtual RTree *getOrCreateParent() {
@@ -50,6 +50,11 @@ public:
 
   /* split */
   virtual double distance(RTree *r) {}
+
+  virtual double unusefulArea(RTree *other) {
+    return this->boundingBox()->unusefulArea(other->boundingBox());
+  }
+
   virtual void addNode(RTree *t) {}
   // calculates the node where the area grows less, 
   // look into the tree as deep as is defined in level
@@ -57,10 +62,13 @@ public:
   virtual void addNodeSilently(RTree *t) {}
 
   /* linear split */
-  virtual RTree *linearSplit(){}
+  virtual RTree *split(){}
   virtual RTree* updateBoundingBoxSplitIfNeeded() {}
   // virtual triplete* chooseAnchors(RTree *left, RTree *right){}
   triplete* chooseAnchors(triplete *trip){}
+  triplete* chooseAnchorsLinear(triplete *trip){}
+  triplete* chooseAnchorsQuadratic(triplete *trip){}
+
   /* end linear split */
 
   // deprecated
@@ -190,6 +198,7 @@ public:
   virtual void updateBoundingBox() {}
 
   virtual bool equals(RTree *other) {}
+
   
 };
 

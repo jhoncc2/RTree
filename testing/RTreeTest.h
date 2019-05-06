@@ -12,6 +12,8 @@ public:
     RTreeLeaf *leaf = new RTreeLeaf();
     assertTrue(leaf->isRoot());
     assertTrue(leaf->isLeaf());
+
+    // test minmax algorithm
   }
 
   void testInsertLeaf(){

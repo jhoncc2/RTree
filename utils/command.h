@@ -39,6 +39,8 @@ namespace console{
           std::cout << e.what() << endl;
         }
 
+      } else if (exist(argv, argv + argc, "--exp-random")) {
+        (new RandomExperiment)->run();
       }
       return 0;
   }

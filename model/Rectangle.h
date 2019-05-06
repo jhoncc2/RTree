@@ -86,6 +86,13 @@ public:
     return (ini->x - end->x) * (ini->y - end->y);
   }
 
+
+  double unusefulArea(Rectangle *other) {
+    Rectangle *tmp= new Rectangle(this);
+    tmp->rebound(other); 
+    return tmp->area() - this->area() - other->area();
+  }
+
   double distance(Rectangle *other) {
     if(other->ini->lessThan(this->ini)) {
       return -abs(other->end->distance(this->ini));

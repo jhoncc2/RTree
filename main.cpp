@@ -27,6 +27,10 @@ using namespace std;
 #include "testing/RTreeTest.h"
 #include "testing/SerializeTest.h"
 
+// Experiments
+#include "experiments/BaseExperiment.h"
+#include "experiments/RandomExperiment.h"
+
 // importing utils for pre-computing
 #include "utils/utils.h"
 #include "utils/command.h"
