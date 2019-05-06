@@ -104,6 +104,7 @@ public:
 
     RTree *root = new RTreeNode();
     for (int i = 0; i < 11; ++i){
+      cout << "iteration " << endl;
       root = root->insertRectangle(Rectangle::createRandom());
       assertTrue(root->isRoot());
     }
