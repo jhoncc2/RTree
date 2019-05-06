@@ -215,11 +215,12 @@ public:
 
       // calculate max
       t.j= max;
-      if (maxlist[min] > maxlist[max]){
+      if ((maxlist[min] > maxlist[max]) && min != t.i){ // safe to not pick the same item
         t.j = min;
       }
       
       t.dist = maxlist[t.j] - minlist[t.i];
+
       
 
     } else {
@@ -236,15 +237,17 @@ public:
         
       // calculate max
       t.j = t1.j;
-      if (maxlist[t1.j] < maxlist[t2.j]){
+      if ((maxlist[t1.j] < maxlist[t2.j]) && t2.j != t.i){ // safe to not pick the same item
         t.j = t2.j;
       }
 
       t.dist = maxlist[t.j] - minlist[t.i];
-      
     }
 
     return t;
   }
+
+
+
 };
 
