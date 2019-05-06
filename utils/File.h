@@ -24,8 +24,12 @@ public:
   static void storeTree(RTree *tree, int deepness) {
     // failsafe
     if(deepness == 0)
-       return;
+      return;
 
+    if (tree->isLeaf()){
+      store(tree);
+      return;
+    }
     
     // recursive step
     RTreeNode *node;
