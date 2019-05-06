@@ -96,10 +96,25 @@ public:
     assert((tree->getSize() == 2));
   }
 
+  void randomGererationAndSerialize() {
+    setContext(__func__);
+    conf::CONST_m = 2;
+    conf::CONST_M = 5;
+
+
+    RTree *root = new RTreeNode();
+    for (int i = 0; i < 11; ++i){
+      root = root->insertRectangle(Rectangle::createRandom());
+      assertTrue(root->isRoot());
+    }
+    // assertTrue(root->height() >= 3);
+  }
+
   void run(){
     testSerializeLeaf();
     testLoadLeaf();
     testSerializeNode();
+    randomGererationAndSerialize();
   }
 
 

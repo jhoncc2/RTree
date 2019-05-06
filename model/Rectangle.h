@@ -40,6 +40,11 @@ public:
     return sqrt(pow(2, this->x - other->x) + 
                 pow(2, this->y - other->y));
   }
+
+  bool equals(Point *r) {
+    return (this->x == r->x) &&
+      (this->y == r->y);
+  }
 };
 
 class Rectangle{
@@ -49,6 +54,11 @@ public:
   Rectangle(Rectangle *r) {
     ini = new Point(r->ini);
     end = new Point(r->end);
+  }
+
+  Rectangle(Point *i, Point *e) {
+    ini = new Point(i);
+    end = new Point(e);
   }
 
   Rectangle(float ix, float iy, float ex, float ey) {
@@ -90,19 +100,34 @@ public:
     return output.str();
   }
 
+  static Rectangle *createRandom(){
+    float inix,iniy, endx,endy;
+    inix = randomFloat(0,conf::SIN_MAX_POINT - conf::SIN_MAX_DIST);
+    iniy = randomFloat(0,conf::SIN_MAX_POINT - conf::SIN_MAX_DIST);
+
+    endx = randomFloat(inix+1,inix+1 + conf::SIN_MAX_DIST);
+    endy = randomFloat(iniy+1,iniy+1 + conf::SIN_MAX_DIST);
+
+    return new Rectangle(inix, iniy, endx, endy);
+  }
+
+  static float randomFloat(float lower, float higher) {
+    return lower + static_cast <float> (rand()) /( static_cast <float> (RAND_MAX/(higher-lower)));
+  }
+ 
   static Rectangle *createInstance(string line) {
     std::istringstream iss(line);
     std::string segment;
 
     
     std::getline(iss, segment, ',');
-    int a = std::stoi(segment, nullptr);
+    float a = std::stoi(segment, nullptr);
     std::getline(iss, segment, ',');
-    int b = std::stoi(segment, nullptr);
+    float b = std::stoi(segment, nullptr);
     std::getline(iss, segment, ',');
-    int c = std::stoi(segment, nullptr);
+    float c = std::stoi(segment, nullptr);
     std::getline(iss, segment, ',');
-    int d = std::stoi(segment, nullptr);
+    float d = std::stoi(segment, nullptr);
     // std::cout << touple << endl;
     // std::cout << i << "-" << n << "-" << r << endl;
 

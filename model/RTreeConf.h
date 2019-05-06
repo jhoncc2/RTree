@@ -7,6 +7,9 @@ namespace conf  {
     const int CONST_GRENEE_SPLIT = 3;
     const int CONST_RTREE_SPLIT = 4;
 
+    const int SIN_MAX_POINT = 50000;
+    const int SIN_MAX_DIST = 100;
+
     //customisable
     int CONST_m = 10;
     int CONST_M = 100;
