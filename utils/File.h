@@ -11,8 +11,11 @@ class File : public FileAbstract {
 public:
   
   void store(RTree *tree) {
-    fstream output;
+    if (conf::CONST_SECOND_MEMORY == true){
+      conf::writingCounter = conf::writingCounter + 1;
+    }
 
+    fstream output;
     output.open(tree->getFilename(), ios::out);
     output << tree->serialize();
     output.close();

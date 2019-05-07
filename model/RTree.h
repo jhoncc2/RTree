@@ -11,13 +11,6 @@ using namespace std;
 #include <thread>
 
 
-#ifndef _A_HEADER
-#define _A_HEADER
-
-// #include "File.h"
-
-#endif
-
 typedef unsigned int uint;
 
 class RTree {
@@ -26,6 +19,9 @@ protected:
   RTree *parent = nullptr;
   string filename = "";
   int sizee = 0;
+
+  // 
+  bool needsSave = false;
 
   
 public:
@@ -41,9 +37,7 @@ public:
   virtual RTree *insertRectangle(Rectangle *r){}
   virtual RTree *insertRectangleInternal(Rectangle *r){}
 
-  virtual vector<Rectangle> find(Rectangle &r) {
-
-  }
+  virtual vector<Rectangle*> find(Rectangle *r) {}
 
 
   // virtual RTree *split() {
@@ -321,8 +315,10 @@ public:
   }
 
   void saveInMemory() {
-    if (isSecondMemory())
+    if (isSecondMemory() && needsSave)
       conf::fileManager->store(this);
+
+    needsSave = false;
   }
 
 

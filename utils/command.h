@@ -24,8 +24,8 @@ namespace console{
         try{
           (new TestSuite())->run();
           (new RectangleTest())->run();
-          (new RTreeTest())->run();
           (new SerializeTest())->run();
+          (new RTreeTest())->run();
 
           // test of tester
           TestSuite *suite = new TestSuite();
@@ -40,7 +40,7 @@ namespace console{
         }
 
       } else if (exist(argv, argv + argc, "--exp-random")) {
-        (new RandomExperiment)->run();
+        (new RandomExperiment())->run();
       }
       return 0;
   }

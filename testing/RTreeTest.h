@@ -195,16 +195,55 @@ public:
       int end = pow(2,i);
 
       for (int j = 0; j < end ; ++j) {
-        
         root = root->insertRectangle(Rectangle::createRandom());
         root->logTree();
         assertTrue(root->heightInMemory() < 3);
       }
     }
+
+    cout << "r2" << conf::writingCounter << endl;
     
     assertTrue(root->isRoot());
     assertTrue(!root->isLeaf());
   }
+
+  void testFind(){
+    setContext(__func__);
+
+    conf::CONST_SECOND_MEMORY = false;
+    conf::CONST_m = 1;
+    conf::CONST_M = 2;
+    conf::CONST_LEAF_M = 2;
+
+
+    // test rectangle 
+    Rectangle *r = new Rectangle(1,1,2,3);
+    r->intersect(new Rectangle(0,2,3,3))
+
+    // assertTrue(r->containsPoint(2,2));
+    // assertTrue(!r->containsPoint(2,3));
+    // assertTrue(r->intersect(new Rectangle(2,2,3,3)));
+    // assertTrue(!r->intersect(new Rectangle(3,2,5,5)));
+    cout << "rectangle passed" << endl;
+
+    
+    RTree *root = new RTreeLeaf();
+    root = root->insert(1,1,2,3);
+    root = root->insert(2,1,3,5);
+    root = root->insert(3,1,6,2);
+    root = root->insert(3,2,6,3);
+    root = root->insert(3,4.5,6,4);
+    root = root->insert(3,4,4,6);
+
+    vector<Rectangle*> res;
+    res = root->find(new Rectangle(0,2,3,3));
+    cout << res.size() << endl;
+    for (int j = 0; j < res.size() ; ++j) {
+      cout << res[j]->serialize() << endl;
+    }
+    assertTrue(res.size()==2);
+  }
+
 
   // test configuration
   void run(){
@@ -214,7 +253,8 @@ public:
     this->testOverflowLeaf();
     this->testOverflowNode();
     this->testOverflowNodeQuadratic();
-    this->testOverflowNodeSecondMemory();
+    // this->testOverflowNodeSecondMemory(); // tmp disable
+    this->testFind();
   }
 
 };

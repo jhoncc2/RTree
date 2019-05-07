@@ -13,9 +13,12 @@ public:
   }
 
   RTree *insertRectangle(Rectangle *r){
+    needsSave = true;
     loadChildrenIfNeeded();
     RTree *newRoot = this->insertRectangleInternal(r);
     this->unloadNodesFromMemory(conf::LEVELS_IN_MEMORY);
+
+    this->saveInMemory();
     return newRoot->root();
   }
 
@@ -38,8 +41,18 @@ public:
     return upadtedTree->root();
   }
 
-  vector<Rectangle> find(Rectangle &r){
-    vector<Rectangle> res;
+  vector<Rectangle*> find(Rectangle *r) {
+    if(!bbox->intersect(r))
+      return {};
+
+    vector<Rectangle*> res;
+    loadChildrenIfNeeded();
+    for (int i =1; i < children.size(); i++) {
+      vector<Rectangle*> tmp;
+      tmp = children[i]->find(r);
+      res.insert(res.end(), tmp.begin(), tmp.end());
+    }
+
     return res;
   }
 
@@ -118,8 +131,6 @@ public:
     int b = std::stoi(segment, nullptr); // number of elements
     std::getline(iss, segment, ',');
     string c = segment; // filename
-
-    cout << c << endl;
 
     // boudning box
     std::getline(iss, segment, ',');

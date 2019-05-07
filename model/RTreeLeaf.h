@@ -10,7 +10,10 @@ class RTreeLeaf: public RTree {
 public:
 
   RTree *insertRectangle(Rectangle *r){
-    return this->insertRectangleInternal(r);
+    needsSave = true;
+    RTree *res = this->insertRectangleInternal(r);
+    this->saveInMemory();
+    return res->root();
   }
 
   RTree *insertRectangleInternal(Rectangle *r){
@@ -36,9 +39,17 @@ public:
     }
   }
 
+  vector<Rectangle*> find(Rectangle *r) {
+    if(!bbox->intersect(r))
+      return {};
 
-  vector<Rectangle> find(Rectangle *r){
-    vector<Rectangle> res;
+    vector<Rectangle*> res;
+    loadDataIfNeeded();
+    for (int i =1; i < data.size(); i++) {
+      if (data[i]->intersect(r)) {
+        res.push_back(data[i]);
+      }
+    }
     return res;
   }
 
@@ -71,7 +82,7 @@ public:
 
 
   RTree* split() {
-    cout << "leaf split "  << bbox->serialize() << parent << endl;
+    // cout << "leaf split "  << bbox->serialize() << parent << endl;
     RTree *left, *right, *localRoot;
     triplete trip;
     this->chooseAnchors(&trip);
@@ -329,7 +340,6 @@ public:
       return;
     }
 
-    cout << "remove data" << endl;
     if(level == 0){
       data.clear();
     }

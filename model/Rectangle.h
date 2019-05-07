@@ -93,6 +93,25 @@ public:
     return tmp->area() - this->area() - other->area();
   }
 
+  bool intersect(Rectangle *other) {
+    return ((ini->x > other->ini->x < end->x) || 
+              (ini->x > other->end->x < end->x)) &&
+            ((ini->y > other->ini->y < end->y) || 
+              (ini->y > other->end->y < end->y));
+  }
+
+  bool intersect2(Rectangle *other) {
+    return containsPoint(other->ini->x, other->ini->y) 
+            || containsPoint(other->ini->x, other->end->y) 
+            || containsPoint(other->end->x, other->end->y) 
+            || containsPoint(other->end->x, other->ini->y);
+  }
+
+  bool containsPoint(int x, int y) {
+    return ((x > ini->x) && (y >  ini->y))
+          && ((x < end->x) && (y <  end->y));
+  }
+
   double distance(Rectangle *other) {
     if(other->ini->lessThan(this->ini)) {
       return -abs(other->end->distance(this->ini));

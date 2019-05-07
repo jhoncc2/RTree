@@ -13,17 +13,19 @@ namespace conf  {
     // system configuration
     int bytesInBlock = 512; // bytes
     int bytesRectangle = 4; //bytes 1 byte per float
-    int bytesRTree = 8 + 4;
+    int bytesRTree = 17 + 4 + 4 + 1; // string / 4 rectangle / 4 int
     //customisable
 
     int CONST_m = 10;
     int CONST_M = 100;
     int CONST_LEAF_M = 100;
+
     int CONST_SPLIT_HEURISTIC = CONST_LINEAR_SPLIT;
 
-    // secondary memory
+    // secondary memory variables
     bool CONST_SECOND_MEMORY = false;
     FileAbstract *fileManager;
     int LEVELS_IN_MEMORY = 1;
     string dataDirectory = "data/";
+    int writingCounter = 0;
 }
