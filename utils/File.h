@@ -9,8 +9,7 @@ using namespace std;
 class File : public FileAbstract {
 
 public:
-  // File() : FileAbstract(){}
-
+  
   void store(RTree *tree) {
     fstream output;
 

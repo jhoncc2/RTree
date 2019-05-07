@@ -16,6 +16,7 @@ public:
     setContext(__func__);
     FileAbstract *file = new File();
     conf::CONST_M = 5;
+    conf::CONST_LEAF_M = 5;
 
     RTree *leaf = new RTreeLeaf();
     leaf->insert(1,1,2,2);
@@ -34,6 +35,7 @@ public:
 
 
   void testLoadLeaf(){
+    conf::CONST_SECOND_MEMORY = false;
     setContext(__func__);
     FileAbstract *file = new File();
 
@@ -55,6 +57,7 @@ public:
   }
 
   void testSerializeNode(){
+    conf::CONST_SECOND_MEMORY = false;
     setContext(__func__);
     FileAbstract *file = new File();
 
@@ -89,6 +92,7 @@ public:
   }
 
   void testLoadNode(){
+    conf::CONST_SECOND_MEMORY = false;
     setContext(__func__);
     FileAbstract *file = new File();
 
@@ -111,11 +115,12 @@ public:
     setContext(__func__);
     FileAbstract *file = new File();
     conf::CONST_m = 2;
-    conf::CONST_M = 5;
-
+    conf::CONST_M = 2;
+    conf::CONST_LEAF_M = 2;
+    conf::CONST_SECOND_MEMORY = false;
 
     RTree *root = new RTreeLeaf();
-    for (int i = 0; i < 26; ++i){
+    for (int i = 0; i < 60; ++i){
       root = root->insertRectangle(Rectangle::createRandom());
       assertTrue(root->isRoot());
     }
@@ -123,10 +128,9 @@ public:
     assertTrue(root->height() >= 3);
     root->setFilename("tmp/root.dat");
     root->logTree();
-    file->storeTree(root, 3);
-    // 
-    // //
-    RTree *storedRoot = file->loadFromFile(root->getFilename(), 10);
+    file->storeTree(root, 10);
+    
+    RTree *storedRoot = file->loadFromFile(root->getFilename(), 100);
     storedRoot->logTree();
     assertTrue(root->equals(storedRoot));
   }

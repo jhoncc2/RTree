@@ -99,6 +99,7 @@ public:
     RTree *root = new RTreeLeaf();
     conf::CONST_m = 2;
     conf::CONST_M = 5;
+    conf::CONST_LEAF_M = 5;
     
     root->insert(1,1,2,2);
     root->insert(1,1,2,2);
@@ -128,6 +129,7 @@ public:
     
     conf::CONST_m = 1;
     conf::CONST_M = 2;
+    conf::CONST_LEAF_M = 2;
     
     RTree *root = new RTreeLeaf();
 
@@ -152,6 +154,7 @@ public:
     
     conf::CONST_m = 1;
     conf::CONST_M = 2;
+    conf::CONST_LEAF_M = 2;
     conf::CONST_SPLIT_HEURISTIC = conf::CONST_QUADRATIC_SPLIT;
     
     RTree *root = new RTreeLeaf();
@@ -172,6 +175,37 @@ public:
     assertTrue(root->boundingBox()->equals(new Rectangle(-1,1,5,5)));
   }
 
+  void testOverflowNodeSecondMemory() {
+    setContext(__func__);
+    conf::CONST_SECOND_MEMORY = true;
+    conf::fileManager = new File();
+    conf::LEVELS_IN_MEMORY = 1;
+
+    conf::dataDirectory = "tmp/";
+    conf::CONST_m = 1;
+    conf::CONST_M = 5;
+    conf::CONST_LEAF_M = 5;
+    conf::CONST_SPLIT_HEURISTIC = conf::CONST_QUADRATIC_SPLIT;
+    
+    RTree *root = new RTreeLeaf();
+
+    for (int i = 9; i < 10; ++i) {
+      cout << "********CONST_QUADRATIC_SPLIT********" << endl;
+      cout << "2^" << i  << ":" << endl;
+      int end = pow(2,i);
+
+      for (int j = 0; j < end ; ++j) {
+        
+        root = root->insertRectangle(Rectangle::createRandom());
+        root->logTree();
+        assertTrue(root->heightInMemory() < 3);
+      }
+    }
+    
+    assertTrue(root->isRoot());
+    assertTrue(!root->isLeaf());
+  }
+
   // test configuration
   void run(){
     this->testBasic();
@@ -180,6 +214,7 @@ public:
     this->testOverflowLeaf();
     this->testOverflowNode();
     this->testOverflowNodeQuadratic();
+    this->testOverflowNodeSecondMemory();
   }
 
 };

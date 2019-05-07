@@ -1,5 +1,15 @@
 using namespace std;
 #include <vector>
+#include <iostream>
+#include <iomanip>
+#include <ctime>
+#include <sstream>
+
+#include <chrono>
+#include <iomanip>
+#include <ctime>
+#include <thread>
+
 
 #ifndef _A_HEADER
 #define _A_HEADER
@@ -8,6 +18,7 @@ using namespace std;
 
 #endif
 
+typedef unsigned int uint;
 
 class RTree {
 protected:
@@ -16,7 +27,9 @@ protected:
   string filename = "";
   int sizee = 0;
 
+  
 public:
+  static FileAbstract *fileManager;
 
   RTree (){
   }
@@ -26,6 +39,7 @@ public:
   }
 
   virtual RTree *insertRectangle(Rectangle *r){}
+  virtual RTree *insertRectangleInternal(Rectangle *r){}
 
   virtual vector<Rectangle> find(Rectangle &r) {
 
@@ -150,12 +164,17 @@ public:
   virtual string serializeTree() { }
   
   virtual int height(){}
+  virtual int heightInMemory(){}
 
   virtual void removeIfFound(RTree *t){}
 
   virtual int treeSize() {}
 
   virtual int getSize() {}
+
+  virtual int getScalarSize() {
+    return this->sizee;
+  }
 
   virtual int setSize(int size) {
     this->sizee = size;
@@ -174,6 +193,10 @@ public:
   }
 
   string getFilename() {
+    if (filename.empty()) {
+      filename = conf::dataDirectory + randomStringName();
+    }
+
     return filename;
   }
 
@@ -257,6 +280,51 @@ public:
   bool isSecondMemory() {
     return conf::CONST_SECOND_MEMORY;
   }
+
+
+  FileAbstract *getFileManager() {
+    return conf::fileManager;
+  }
+
+  virtual void unloadNodesFromMemory(int level) {}
+
+  std::string randomString(uint maxLength = 15, std::string charIndex = "abcdefghijklmnaoqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890")
+  { // maxLength and charIndex can be customized, but I've also initialized them.
+      uint length = rand() % maxLength + 1; // length of the string is a random value that can be up to 'l' characters.
+
+      uint indexesOfRandomChars[15]; // array of random values that will be used to iterate through random indexes of 'charIndex'
+      for (uint i = 0; i < length; ++i) // assigns a random number to each index of "indexesOfRandomChars"
+          indexesOfRandomChars[i] = rand() % charIndex.length();
+
+      std::string randomString = ""; // random string that will be returned by this function
+      for (uint i = 0; i < length; ++i)// appends a random amount of random characters to "randomString"
+      {
+          randomString += charIndex[indexesOfRandomChars[i]];
+      } 
+      return randomString;
+  }
+
+  string randomStringName(){
+    using namespace std::chrono;
+    milliseconds ms = duration_cast< milliseconds >(
+        system_clock::now().time_since_epoch()
+    );
+
+    auto t = std::time(nullptr);
+    auto tm = *std::localtime(&t);
+
+    std::ostringstream oss;
+    // oss << std::put_time(&tm, "%d-%m-%Y%H-%M-%S");
+    oss << to_string(ms.count());
+    // auto str = oss.str();
+    return oss.str() + ".dat";
+  }
+
+  void saveInMemory() {
+    if (isSecondMemory())
+      conf::fileManager->store(this);
+  }
+
 
 };
 

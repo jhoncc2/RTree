@@ -10,19 +10,30 @@ class RTreeLeaf: public RTree {
 public:
 
   RTree *insertRectangle(Rectangle *r){
+    return this->insertRectangleInternal(r);
+  }
+
+  RTree *insertRectangleInternal(Rectangle *r){
     if(bbox == nullptr) {
       bbox = new Rectangle(r);
     }
+    loadDataIfNeeded();
 
     data.push_back(r);
     bbox->rebound(r);
     // redimension if needed 
 
-    if (data.size() > conf::CONST_M) {
+    if (data.size() > conf::CONST_LEAF_M) {
       return this->split()->root();
     }
 
     return this->root();
+  }
+
+  void loadDataIfNeeded() {
+    if(data.size() == 0 && this->getScalarSize() > 0) {
+      conf::fileManager->loadTreeChildren(this, 1);
+    }
   }
 
 
@@ -54,6 +65,10 @@ public:
   virtual int height(){
     return 1;
   }
+  int heightInMemory(){
+    return 1;
+  }
+
 
   RTree* split() {
     cout << "leaf split "  << bbox->serialize() << parent << endl;
@@ -63,12 +78,18 @@ public:
     // cout << trip.i << " - " << trip.j << endl;
     // cout << data[trip.i] << " - " << data[trip.j] << endl;
     
+    // reuse
+    vector<Rectangle*> dataResp;
+    dataResp = data;
+    data = {};
+    bbox = nullptr;
+
     // fill up new neightbors
     localRoot = getOrCreateParent();
     left = this->newInstance();
     right = this->newInstance();
-    left->insertRectangle(data[trip.i]);
-    right->insertRectangle(data[trip.j]);
+    left->insertRectangleInternal(dataResp[trip.i]);
+    right->insertRectangleInternal(dataResp[trip.j]);
 
     // create structure
     localRoot->removeIfFound(this);
@@ -80,15 +101,14 @@ public:
     // localRoot = localRoot->updateBoundingBoxSplitIfNeeded();
     
     // fill remaining data
-    for(int i = 0; i < data.size(); i++) {
+    for(int i = 0; i < dataResp.size(); i++) {
       if ((i != trip.i) && (i != trip.j)) {
-        localRoot->insertRectangle(data[i]);
+        localRoot->insertRectangleInternal(dataResp[i]);
       }
     }
-    
 
-    delete this;
-    if(localRoot->getSize() > conf::CONST_M) {
+    // delete this;
+    if(localRoot->getSize() > conf::CONST_LEAF_M) {
       return parent->split();
     }
     return localRoot->root();
@@ -302,6 +322,19 @@ public:
     return other->isLeaf() 
           && bbox->equals(other->boundingBox()) 
           && getSize() == getSize();
+  }
+
+  void unloadNodesFromMemory(int level) {
+    if (!isSecondMemory()){
+      return;
+    }
+
+    cout << "remove data" << endl;
+    if(level == 0){
+      data.clear();
+    }
+
+      
   }
 
 };

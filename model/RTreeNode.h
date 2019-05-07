@@ -1,5 +1,8 @@
 using namespace std;
 #include <vector>
+#include <iostream>
+#include <fstream>
+#include <cstdio>
 
 class RTreeNode : public RTree {
   vector<RTree*> children;
@@ -10,6 +13,13 @@ public:
   }
 
   RTree *insertRectangle(Rectangle *r){
+    loadChildrenIfNeeded();
+    RTree *newRoot = this->insertRectangleInternal(r);
+    this->unloadNodesFromMemory(conf::LEVELS_IN_MEMORY);
+    return newRoot->root();
+  }
+
+  RTree *insertRectangleInternal(Rectangle *r){
     bbox->rebound(r);
 
     float minArea = children[0]->expandedArea(r);
@@ -23,7 +33,9 @@ public:
       }
     }
 
-    return children[index]->insertRectangle(r)->root();
+    RTree *upadtedTree = children[index]->insertRectangle(r);
+
+    return upadtedTree->root();
   }
 
   vector<Rectangle> find(Rectangle &r){
@@ -33,6 +45,12 @@ public:
 
   bool isRoot() {
     return parent == NULL;
+  }
+
+  void loadChildrenIfNeeded() {
+    if(children.size() == 0 && this->getScalarSize() > 0) {
+      conf::fileManager->loadTreeChildren(this, 1);
+    }
   }
 
   virtual void addNode(RTree *t) {
@@ -163,6 +181,12 @@ public:
   virtual int height(){
     return 1 + children.front()->height();
   }
+  int heightInMemory(){
+    if(children.size() == 0) 
+      return 1;
+    else
+      return 1 + children.front()->heightInMemory();
+  }
 
   vector<Rectangle*> getChildrenBoundingBox() {
       return this->getBoundingBoxContent();
@@ -181,12 +205,18 @@ public:
     triplete trip;
     this->chooseAnchors(&trip);
     
+    vector<RTree*> childrenResp;
+    childrenResp = children;
+    children = {};
+    bbox = nullptr;
+
     // fill up new neightbors
     parent = getOrCreateParent();
-    left = this->newInstance();
+    left = this; //recicle
     right = this->newInstance();
-    left->addNode(children[trip.i]);
-    right->addNode(children[trip.j]);
+    left->addNode(childrenResp[trip.i]);
+    right->addNode(childrenResp[trip.j]);
+
 
     // create structure
     parent->removeIfFound(this);
@@ -198,14 +228,29 @@ public:
     // parent = parent->updateBoundingBoxSplitIfNeeded();
     
     // fill remaining children
-    for(int i = 0; i < children.size(); i++) {
-      if ((children[i] != children[trip.i]) && (children[i] != children[trip.j])) {
-        parent->insertNode(children[i], 1);
+    for(int i = 0; i < childrenResp.size(); i++) {
+      if ((childrenResp[i] != childrenResp[trip.i]) && (childrenResp[i] != childrenResp[trip.j])) {
+        parent->insertNode(childrenResp[i], 1);
       }
     }
 
-    delete this;
+    left->saveInMemory();
+    right->saveInMemory();
+    parent->saveInMemory();
+
+    // this->deleteObject();
+    if(parent->getSize() > conf::CONST_M) {
+      return parent->split();
+    }
+
     return parent->root();
+  }
+
+
+  void deleteObject() {
+    if(isSecondMemory())
+      remove(this->getFilename().c_str());
+    delete this;
   }
 
   // chooses the most appropiate node to insert it, 
@@ -372,8 +417,6 @@ public:
       this->rebound(children.at(i));
     }
   }
-
-
  
   virtual void printTree(string prefix) {
     cout << prefix << "(" << boundingBox()->serialize() << ")" <<endl;
@@ -390,4 +433,19 @@ public:
     return (!other->isLeaf()) && (bbox->equals(other->boundingBox())) ;
   }
 
+  void unloadNodesFromMemory(int level) {
+    if (!isSecondMemory()){
+      return;
+    }
+
+    // cout<< "remove children " << children.size() << " " << level << endl;
+    if(level == 0){
+      children.clear();
+      return;
+    }
+
+    for (int i = 0; i < children.size(); ++i){
+      children[i]->unloadNodesFromMemory(level - 1);
+    }
+  }
 };
