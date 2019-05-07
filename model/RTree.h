@@ -1,6 +1,12 @@
 using namespace std;
 #include <vector>
 
+#ifndef _A_HEADER
+#define _A_HEADER
+
+// #include "File.h"
+
+#endif
 
 
 class RTree {
@@ -19,10 +25,10 @@ public:
     return insertRectangle(new Rectangle(ix, iy, ex, ey));
   }
 
-
   virtual RTree *insertRectangle(Rectangle *r){}
 
   virtual vector<Rectangle> find(Rectangle &r) {
+
   }
 
 
@@ -43,6 +49,7 @@ public:
     }
     return parent;
   }
+
   struct triplete {
     double dist;
     int i,j;
@@ -247,7 +254,9 @@ public:
     return t;
   }
 
-
+  bool isSecondMemory() {
+    return conf::CONST_SECOND_MEMORY;
+  }
 
 };
 

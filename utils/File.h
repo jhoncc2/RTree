@@ -5,11 +5,13 @@ using namespace std;
 #include <iostream>
 #include <fstream>
 
-class File {
+
+class File : public FileAbstract {
 
 public:
+  // File() : FileAbstract(){}
 
-  static void store(RTree *tree) {
+  void store(RTree *tree) {
     fstream output;
 
     output.open(tree->getFilename(), ios::out);
@@ -21,7 +23,7 @@ public:
   * stores all the tree, stops either deepness=0 or reached 
   * the leaf level
   */
-  static void storeTree(RTree *tree, int deepness) {
+  void storeTree(RTree *tree, int deepness) {
     // failsafe
     if(deepness == 0)
       return;
@@ -30,7 +32,7 @@ public:
       store(tree);
       return;
     }
-    
+
     // recursive step
     RTreeNode *node;
     if (deepness > 1 && !tree->isLeaf()) {
@@ -45,7 +47,7 @@ public:
     store(tree);
   }
 
-  static RTree* loadFromFile(string filename, int deepness) {
+  RTree* loadFromFile(string filename, int deepness) {
     string line;
     ifstream file;
     file.open(filename.c_str(), ios::in);
@@ -68,7 +70,7 @@ public:
   }
 
   
-  static void loadTreeChildren(RTree *tree, int deepness) {
+  void loadTreeChildren(RTree *tree, int deepness) {
     if (deepness == 0) 
       return;
 
@@ -111,12 +113,7 @@ public:
     file.close();
   }
 
-  struct Header{
-    bool isLeaf, areChildrenLeaf;
-    int size;
-  };
-
-  static Header readHeader(string line) {
+  Header readHeader(string line) {
     std::istringstream iss(line);
     std::string segment;
     

@@ -5,15 +5,16 @@ using namespace std;
 class SerializeTest : public TestSuite {
 
 public:
-  RTree *tree;
+  // FileAbstract *file; 
 
   SerializeTest() {
-    tree = new RTree();
+    // file = new File();
   }
   
 
   void testSerializeLeaf(){
     setContext(__func__);
+    FileAbstract *file = new File();
     conf::CONST_M = 5;
 
     RTree *leaf = new RTreeLeaf();
@@ -23,7 +24,7 @@ public:
     leaf->insert(2,3,5,5);
     leaf->setFilename("tmp/tempfile.data");
 
-    File::store(leaf);
+    file->store(leaf);
     ifstream f(leaf->getFilename().c_str());
     // if(f.fail()) // hack
     //   assert(true);
@@ -34,6 +35,7 @@ public:
 
   void testLoadLeaf(){
     setContext(__func__);
+    FileAbstract *file = new File();
 
     RTreeLeaf *leaf = new RTreeLeaf();
     leaf->setFilename("tmp/tempfile.data");
@@ -43,7 +45,7 @@ public:
     if(f.fail()) // hack
       assert(true);
 
-    File::loadTreeChildren(leaf, 1);
+    file->loadTreeChildren(leaf, 1);
     // leaf->logTree();
 
     Rectangle *bbox = new Rectangle(-1,1,5,5);
@@ -54,6 +56,7 @@ public:
 
   void testSerializeNode(){
     setContext(__func__);
+    FileAbstract *file = new File();
 
     RTreeNode  *n = new RTreeNode();
     n->setBoundingBox(new Rectangle(-3,-3,6,7));
@@ -75,9 +78,9 @@ public:
     // string fname = "tmp/tempfile.data";
     ifstream f(n->getFilename().c_str());
 
-    File::store(n);
-    File::store(leaf1);
-    File::store(leaf2);
+    file->store(n);
+    file->store(leaf1);
+    file->store(leaf2);
 
     // if(f.fail()) // hack
     //   assert(true);
@@ -87,6 +90,7 @@ public:
 
   void testLoadNode(){
     setContext(__func__);
+    FileAbstract *file = new File();
 
     RTreeNode *tree = new RTreeNode();
     tree->setFilename("tmp/node.data");
@@ -96,7 +100,7 @@ public:
     // if(f.fail()) // hack
     //   assert(true);
 
-    File::loadTreeChildren(tree, 1);
+    file->loadTreeChildren(tree, 1);
     assert((tree->getChildren()[1]->getSize() == 2)); 
     assert((tree->getSize() == 2));
     assert((tree->height() == 2));
@@ -105,6 +109,7 @@ public:
 
   void randomGererationAndSerialize() {
     setContext(__func__);
+    FileAbstract *file = new File();
     conf::CONST_m = 2;
     conf::CONST_M = 5;
 
@@ -118,10 +123,10 @@ public:
     assertTrue(root->height() >= 3);
     root->setFilename("tmp/root.dat");
     root->logTree();
-    File::storeTree(root, 3);
+    file->storeTree(root, 3);
     // 
     // //
-    RTree *storedRoot = File::loadFromFile(root->getFilename(), 10);
+    RTree *storedRoot = file->loadFromFile(root->getFilename(), 10);
     storedRoot->logTree();
     assertTrue(root->equals(storedRoot));
   }
